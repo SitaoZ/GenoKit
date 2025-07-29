@@ -7,28 +7,28 @@ def readme():
         return long_description
 
 from setuptools import setup 
-from featurExtract.version import __version__
+from GenoKit.version import __version__
 
 PACKAGES = [
-    "featurExtract",
-    "featurExtract.commands",
-    "featurExtract.database",
-    "featurExtract.utils"
+    "GenoKit",
+    "GenoKit.commands",
+    "GenoKit.database",
+    "GenoKit.utils"
 ]
 setup(
-    name='featurExtract',
+    name='GenoKit',
     version=__version__,
-    keywords='genome feature, extract',
-    description='Extract genome ferature sequence for biologists',
+    keywords='genomic feature, extract',
+    description='A versatile command-line toolkit for comprehensive genomic feature extraction, analysis, and visualization',
     long_description=readme(),
     long_description_content_type='text/markdown',
     entry_points = {'console_scripts': [
-                       'featurExtract=featurExtract.command_gff:main',
-                       'genBankExtract=featurExtract.command_gb:main'
+                       'GenoKit=GenoKit.command_genokit:main',
+                       'GenoKitGB=GenoKit.command_genokitgb:main'
                    ]},
     author='zhusitao',
     author_email='zhusitao1990@163.com',
-    url='https://github.com/SitaoZ/featurExtract.git',
+    url='https://github.com/SitaoZ/GenoKit.git',
     include_package_data=True, # done via MANIFEST.in under setuptools
     packages=PACKAGES,
     license='MIT',

@@ -1,20 +1,20 @@
 # Overview
 
-featurExtract is a Python package for bioinformatics, containing two command programs. The first, featurExtract, includes ten subroutines: create, gene, promoter, UTR, uORF, CDS, dORF, exon, intron and intergenic. The create subroutine is used to create a database, while the promoter subroutine is used to extract promoter sequences. The uORF subroutine extracts upstream open reading frames sequences, and the UTR subroutine extracts untranslated region sequences. The CDS subroutine extracts coding sequences and the intergenic subroutine extracts intergenic sequences between two genes. The second command program, genBankExtract, includes four subroutines: gene, CDS, rRNA and tRNA.
+GenoKit is a Python package for bioinformatics, containing two command programs. The first, GenoKit, includes ten subroutines: create, gene, promoter, UTR, uORF, CDS, dORF, exon, intron and intergenic. The create subroutine is used to create a database, while the promoter subroutine is used to extract promoter sequences. The uORF subroutine extracts upstream open reading frames sequences, and the UTR subroutine extracts untranslated region sequences. The CDS subroutine extracts coding sequences and the intergenic subroutine extracts intergenic sequences between two genes. The second command program, genBankExtract, includes four subroutines: gene, CDS, rRNA and tRNA.
 
 
-## Brief introduction of featurExtract package
+## Brief introduction of GenoKit package
 
 ### Install
-Two way offer to install featurExtract module.
+Two way offer to install GenoKit module.
 
 #### install command line
 
 ```bash
-pip install featurExtract
+pip install GenoKit
 # other
-git clone https://github.com/SitaoZ/featurExtract.git
-cd featurExtract
+git clone https://github.com/SitaoZ/GenoKit.git
+cd GenoKit
 python setup.py install
 ```
 
@@ -27,19 +27,19 @@ setuptools >= 49.2.0 [setuptools](https://pypi.org/project/setuptools/)
 biopython >= 1.78 [biopython](https://biopython.org/wiki/Documentation/)  
 
 ### Usage
-featurExtract is designed for GFF and GTF file  
+GenoKit is designed for GFF and GTF file  
 and GenBankExtract is suited for GenBank file. 
 
-#### featurExtract
+#### GenoKit
 
 ```bash
 # gff or gtf database
 
-featurExtract -h
-Program:  featurExtract (tools for genomic feature extract)
+GenoKit -h
+Program:  GenoKit (tools for genomic feature extract)
 Version:  0.2.6.0
 Contact:  Sitao Zhu <zhusitao1990@163.com>
-Usage  :  featurExtract <command> [parameters] 
+Usage  :  GenoKit <command> [parameters] 
 Command: 
           create        create GFF/GTF database
           stat          database statistics
@@ -60,8 +60,8 @@ Command:
 - create
 
 ```bash
-featurExtract create -h
-usage: featurExtract create [-h] -g GENOMEFEATURE -o OUTPUT -p PREFIX
+GenoKit create -h
+usage: GenoKit create [-h] -g GENOMEFEATURE -o OUTPUT -p PREFIX
                             [-s {gff,gtf}]
 
 optional arguments:
@@ -78,8 +78,8 @@ optional arguments:
 
 - stat
 ```bash
-featurExtract stat -h
-usage: featurExtract stat [-h] -d DATABASE -g GENOME -o OUTPUT [-s {gff,gtf}]
+GenoKit stat -h
+usage: GenoKit stat [-h] -d DATABASE -g GENOME -o OUTPUT [-s {gff,gtf}]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -96,8 +96,8 @@ optional arguments:
 - cds
 
 ```bash
-featurExtract cds -h
-usage: featurExtract cds [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit cds -h
+usage: GenoKit cds [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                          [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
                          [-r {mrna,all}] [-s {gff,gtf}] [-v]
 
@@ -125,8 +125,8 @@ optional arguments:
 ```
 - dorf 
 ```bash
-featurExtract dorf -h 
-usage: featurExtract dorf [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit dorf -h 
+usage: GenoKit dorf [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                           [-i TRANSCRIPT] [-l LENGTH] [-m] [-n] [-o OUTPUT]
                           [-p PROCESS] [-r {mrna,all}] [-s {gff,gtf}] [-v]
 
@@ -163,8 +163,8 @@ optional arguments:
 
 - exon
 ```bash
-featurExtract exon -h 
-usage: featurExtract exon [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit exon -h 
+usage: GenoKit exon [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                           [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
                           [-r {mrna,all}] [-s {gff,gtf}] [-v]
 
@@ -192,8 +192,8 @@ optional arguments:
 
 - gene
 ```bash
-featurExtract gene -h 
-usage: featurExtract gene [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+GenoKit gene -h 
+usage: GenoKit gene [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
                           [-i GENE] [-o OUTPUT] [-p] [-s {gff,gtf}]
 
 optional arguments:
@@ -215,8 +215,8 @@ optional arguments:
 
 - intron
 ```bash
-featurExtract intron -h 
-usage: featurExtract intron [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit intron -h 
+usage: GenoKit intron [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                             [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
                             [-r {mrna,all}] [-s {gff,gtf}] [-v]
 
@@ -244,8 +244,8 @@ optional arguments:
 
 - igr
 ```bash
-featurExtract igr -h 
-usage: featurExtract igr [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit igr -h 
+usage: GenoKit igr [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                          [-l IGR_LENGTH] [-o OUTPUT] [-p PROCESS]
                          [-s {gff,gtf}] [-v]
 
@@ -272,8 +272,8 @@ optional arguments:
 
 - mrna
 ```bash
-featurExtract mrna -h 
-usage: featurExtract mrna [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
+GenoKit mrna -h 
+usage: GenoKit mrna [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
                           [-i TRANSCRIPT] [-o OUTPUT] [-p] [-s {gff,gtf}] [-u]
 
 optional arguments:
@@ -297,8 +297,8 @@ optional arguments:
 
 - promoter
 ```bash
-featurExtract promoter -h 
-usage: featurExtract promoter [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
+GenoKit promoter -h 
+usage: GenoKit promoter [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
                               [-i GENE] [-l PROMOTER_LENGTH] [-o OUTPUT]
                               [-p PROCESS] [-u UTR5_UPPER_LENGTH] [-v]
 
@@ -325,8 +325,8 @@ optional arguments:
 
 - terminator
 ```bash
-featurExtract terminator -h 
-usage: featurExtract terminator [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
+GenoKit terminator -h 
+usage: GenoKit terminator [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
                                 [-i GENE] [-l TERMINATOR_LENGTH] [-o OUTPUT]
                                 [-u UTR3_LOWER_LENGTH] [-v]
 
@@ -350,8 +350,8 @@ optional arguments:
 ```
 - transcript
 ```bash
-featurExtract transcript -h 
-usage: featurExtract transcript [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
+GenoKit transcript -h 
+usage: GenoKit transcript [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
                                 [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
                                 [-r {mrna,all}] [-s {gff,gtf}] [-u] [-v]
 
@@ -381,8 +381,8 @@ optional arguments:
 
 - uorf
 ```bash
-featurExtract uorf -h 
-usage: featurExtract uorf [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit uorf -h 
+usage: GenoKit uorf [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                           [-i TRANSCRIPT] [-l LENGTH] [-m] [-n] [-o OUTPUT]
                           [-p PROCESS] [-r {mrna,all}] [-s {gff,gtf}] [-v]
 
@@ -420,8 +420,8 @@ optional arguments:
 
 - utr
 ```bash
-featurExtract utr -h 
-usage: featurExtract utr [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
+GenoKit utr -h 
+usage: GenoKit utr [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
                          [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
                          [-r {mrna,all}] [-s {gff,gtf}] [-v]
 
@@ -460,39 +460,39 @@ genBankExtract tRNA -h
 ```
 ### Examples
 
-#### featurExtract
+#### GenoKit
 
 ```bash
 # step 1 create database
-time featurExtract create -s gtf -g Araport11_GTF_genes_transposons.Mar202021.gtf -o test/ -p ath
+time GenoKit create -s GTF -g Araport11_GTF_genes_transposons.Mar202021.gtf -o test/ -p ath
 
 # step 2 command
 # cds 
-time featurExtract cds -d test/ath.GFF -g ath_chr.fa -r all -f csv -p 1 -o test/zhusitao_cds3.csv
-time featurExtract cds -d test/ath.GFF -g ath_chr.fa -r all -f fasta -p 1 -o test/zhusitao_cds3.fa
-time featurExtract cds -d test/ath.GFF -g ath_chr.fa -r all -f gff -p 1 -o test/zhusitao_cds3.gff
+time GenoKit cds -d test/ath.GFF -g ath_chr.fa -r all -f csv -p 1 -o test/zhusitao_cds3.csv
+time GenoKit cds -d test/ath.GFF -g ath_chr.fa -r all -f fasta -p 1 -o test/zhusitao_cds3.fa
+time GenoKit cds -d test/ath.GFF -g ath_chr.fa -r all -f gff -p 1 -o test/zhusitao_cds3.gff
 
 # transcript
-time featurExtract transcript -d test/ath.GFF -g ath_chr.fa -r all -f csv -p 1 -o test/zhusitao_transcript.csv
+time GenoKit transcript -d test/ath.GFF -g ath_chr.fa -r all -f csv -p 1 -o test/zhusitao_transcript.csv
 
 
 # promoter 
-time featurExtract promoter -d test/ath.GFF -f csv -g ath_chr.fa -l 10 -o test/zhusitao_promoter.csv -u 0 -i AT1G01010 -v 
+time GenoKit promoter -d test/ath.GFF -f csv -g ath_chr.fa -l 10 -o test/zhusitao_promoter.csv -u 0 -i AT1G01010 -v 
 
 # terminator
-time featurExtract terminator -d test/ath.GFF -f csv -g ath_chr.fa -l 10 -o test/zhusitao_terminator.csv -u 0 -i AT1G01010 -v 
+time GenoKit terminator -d test/ath.GFF -f csv -g ath_chr.fa -l 10 -o test/zhusitao_terminator.csv -u 0 -i AT1G01010 -v 
 
 # exon 
-time featurExtract exon -d test/ath.GFF -f fasta -g ath_chr.fa -o test/zhusitao_exon.fa -s gff 
+time GenoKit exon -d test/ath.GFF -f fasta -g ath_chr.fa -o test/zhusitao_exon.fa -s gff 
 
 # intron 
-time featurExtract intron -d test/ath.GFF -f fasta -g ath_chr.fa -o test/zhusitao_intron.fa -s gff
+time GenoKit intron -d test/ath.GFF -f fasta -g ath_chr.fa -o test/zhusitao_intron.fa -s gff
 
 # uorf 
-time featurExtract uorf -d test/ath.GFF -g ath_chr.fa -l 1 -r all -f csv -o test/zhusitao_uORF.csv -s gff
+time GenoKit uorf -d test/ath.GFF -g ath_chr.fa -l 1 -r all -f csv -o test/zhusitao_uORF.csv -s gff
 
 # dorf
-time featurExtract dorf -d test/ath.GFF -g ath_chr.fa -l 1 -r all -f csv -o test/zhusitao_dorf.csv -s gff
+time GenoKit dorf -d test/ath.GFF -g ath_chr.fa -l 1 -r all -f csv -o test/zhusitao_dorf.csv -s gff
 ```
     
 #### genBankExtract

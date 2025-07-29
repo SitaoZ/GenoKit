@@ -1,0 +1,164 @@
+import re
+from typing import Dict, List, Tuple
+from Bio.Seq import Seq
+from collections import defaultdict
+
+class CDSsgRNADesigner:
+    """
+    CDS特异性sgRNA设计类
+    
+    参数:
+        gene_name (str): 基因名称
+        transcripts (Dict[str, str]): 转录本字典 {transcript_id: CDS_sequence}
+        pam_pattern (str): PAM正则模式(默认SpCas9的NGG)
+        sg_length (int): sgRNA长度(默认20)
+    """
+    def __init__(self,
+                 gene_name: str,
+                 transcripts: Dict[str, str],
+                 pam_pattern: str = r'(?=(.{20})(NGG))',
+                 sg_length: int = 20):
+        self.gene_name = gene_name
+        self.sg_length = sg_length
+        self.pam_regex = re.compile(pam_pattern)
+        self.transcripts = self._preprocess_transcripts(transcripts)
+        self.candidate_pool = defaultdict(list)
+
+    def _preprocess_transcripts(self, transcripts: Dict[str, str]) -> Dict[str, Dict]:
+        """预处理CDS序列并存储双链信息"""
+        processed = {}
+        for tid, seq in transcripts.items():
+            # 清洗序列并验证
+            clean_seq = re.sub(r'[^ATCGatcg]', '', seq).upper()
+            if len(clean_seq) < 30:
+                raise ValueError(f"转录本 {tid} CDS长度不足30bp")
+            
+            # 存储正负链序列
+            processed[tid] = {
+                'forward': clean_seq,
+                'reverse': str(Seq(clean_seq).reverse_complement())
+            }
+        return processed
+
+    def _scan_strand(self, sequence: str, strand: str) -> List[Dict]:
+        """扫描单链PAM位点"""
+        candidates = []
+        for match in self.pam_regex.finditer(sequence):
+            start = match.start(1)
+            end = start + self.sg_length
+            pam = match.group(2)
+            candidates.append({
+                'sequence': match.group(1),
+                'pam': pam,
+                'position': (start, end),
+                'strand': strand
+            })
+        return candidates
+
+    def find_candidates(self) -> None:
+        """识别所有转录本的候选sgRNA"""
+        for tid, seqs in self.transcripts.items():
+            # 扫描正链
+            for candidate in self._scan_strand(seqs['forward'], '+'):
+                self._add_candidate(tid, candidate)
+            
+            # 扫描负链
+            for candidate in self._scan_strand(seqs['reverse'], '-'):
+                self._add_candidate(tid, candidate)
+
+    def _add_candidate(self, tid: str, candidate: Dict) -> None:
+        """存储候选sgRNA并合并重复序列"""
+        key = (candidate['sequence'], candidate['strand'])
+        self.candidate_pool[key].append({
+            'transcript': tid,
+            'position': candidate['position'],
+            'pam': candidate['pam']
+        })
+
+    def filter_candidates(self,
+                         require_all: bool = False,
+                         min_gc: float = 0.4,
+                         max_gc: float = 0.6) -> List[Dict]:
+        """
+        过滤并优化候选sgRNA
+        
+        参数:
+            require_all: 是否要求靶向所有转录本
+            min_gc: 最小GC含量(默认0.4)
+            max_gc: 最大GC含量(默认0.6)
+        """
+        final_candidates = []
+        
+        # 确定目标转录本集合
+        target_transcripts = set(self.transcripts.keys())
+        
+        for (seq, strand), hits in self.candidate_pool.items():
+            # 检查靶向范围
+            hit_transcripts = {h['transcript'] for h in hits}
+            if require_all and (hit_transcripts != target_transcripts):
+                continue
+                
+            # 计算GC含量
+            gc = (seq.count('G') + seq.count('C')) / len(seq)
+            if not (min_gc <= gc <= max_gc):
+                continue
+                
+            # 排除不良模式
+            if re.search(r'(.)\1{3}', seq):  # 4+重复碱基
+                continue
+            if seq.startswith('T'):  # 避免T开头
+                continue
+                
+            # 评分标准
+            score = 0
+            score += 2 if 0.45 <= gc <= 0.55 else 0
+            score += 1 if seq[0] in ['G', 'C'] else 0
+            
+            # 收集结果
+            final_candidates.append({
+                'sequence': seq,
+                'strand': strand,
+                'gc_content': round(gc, 2),
+                'score': score,
+                'targets': len(hit_transcripts),
+                'positions': {h['transcript']: h['position'] for h in hits}
+            })
+        
+        # 按评分排序
+        return sorted(final_candidates,
+                     key=lambda x: (-x['score'], -x['targets']))
+
+    def design(self, require_all: bool = False) -> List[Dict]:
+        """执行完整设计流程"""
+        self.find_candidates()
+        return self.filter_candidates(require_all)
+
+    def get_consensus_guides(self, n: int = 5) -> List[Tuple]:
+        """获取前N个最佳通用sgRNA"""
+        candidates = self.design(require_all=True)
+        return [(sg['sequence'], sg['strand']) for sg in candidates[:n]]
+
+if __name__ == "__main__":
+    # 使用示例
+    test_transcripts = {
+        "NM_001": "ATGCTAGCTAGCTAGCTAGCTCGATCGATCGATCGATCGATAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCAGGTTGTTCTTCTATGTGGCCCTTTGGGACAGGACACATGGATGCTGGAATCACCCAGAGCCCAAGACACAAGGTCACAGAGACAGGAACACCAGTGACTCTGAGATGTCACCAGACTGAGAACCACCGCTATATGTACTGGTATCGACAAGACCCGGGGCATGGGCTGAGGCTGATCCATTACTCATATGGTGTTAAAGATACTGACAAAGGAGAAGTCTCAGATGGCTATAGTGTCTCTAGATCAAAGACAGAGGATTTCCTCCTCACTCTGGAGTCCGCTACCTGGACCTGAAATGGGCACAAGGTTGTTCTTCTATGTGGCCCTTTGTCTCCTGTGGACAGGACACATGGATGCTGGAATCACCCAGAGCCCAAGACACAAGGTCACAGAGACAGGAACACCAGTGACTCTGAGATGTCACCAGACTGAGAACCACCGCTATATGTACTGGTATCGACAAGACCCGGGGCATGGGCTGAGGCTGATCCATTACTCATATGGTGTTAAAGATACTGACAAAGGAGAAGTCTCAGATGGCTATAGTGTCTCTAGATCAAAGACAGAGGATTTCCTCCTCACTCTGGAGTCCGCTACCAGCTCCCAGACATCTGTGTACTTCTGTGCCATCAGTGAGTCTTTTGAAAGCAGTGATATAACTCTAGGTAAATGCTATGTCTACTAATTATAGTTTCTTAATTTTCATAGCTATATTATGAAAAGAGTAAATTGAAGAAATGGAAACTGCAAATTACACCAAGGTGACAGAATTTGTTCTCACTGGCCTATCCCAGACTCCAGAGGTCCAACTAGTCCTATTTGTTATATTTCTATCCTTCTATTTGTTCATCCTACCAGGAAATATCCTTATCATTTGCACCATCAGTCTAGACCCTCATCTGACCTCTCCTATGTATTTCCTGTTGGCTAATCTGGCCTTCCTTGATATTTGGTACTTAGCTAGGCTAGCTAGCTAGCTAGCTAGCGCGATCGATCGATCGATCGA",
+        "NM_002": "ATCGATCGATCGATCGATCGATAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGC",
+        "NM_003": "ATGAGATCCTGGCCTGGACCTGAAATGGGCACAAGGTTGTTCTTCTATGTGGCCCTTTGTCTCCTGTGGACAGGACACATGGATGCTGGAATCACCCAGAGCCCAAGACACAAGGTCACAGAGACAGGAACACCAGTGACTCTGAGATGTCACCAGACTGAGAACCACCGCTATATGTACTGGTATCGACAAGACCCGGGGCATGGGCTGAGGCTGATCCATTACTCATATGGTGTTAAAGATACTGACAAAGGAGAAGTCTCAGATGGCTATAGTGTCTCTAGATCAAAGACAGAGGATTTCCTCCTCACTCTGGAGTCCGCTACCAGCTCCCAGACATCTGTGTACTTCTGTGCCATCAGTGAGTC",
+        "NM_004": "ATGAGATCCTGGCCATCGATCGATCGATCGATCGATAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCAGGTTGTTCTTCTATGTGGCCCTTTGGGACAGGACACATGGATGCTGGAATCACCCAGAGCCCAAGACACAAGGTCACAGAGACAGGAACACCAGTGACTCTGAGATGTCACCAGACTGAGAACCACCGCTATATGTACTGGTATCGACAAGACCCGGGGCATGGGCTGAGGCTGATCCATTACTCATATGGTGTTAAAGATACTGACAAAGGAGAAGTCTCAGATGGCTATAGTGTCTCTAGATCAAAGACAGAGGATTTCCTCCTCACTCTGGAGTCCGCTACCTGGACCTGAAATGGGCACAAGGTTGTTCTTCTATGTGGCCCTTTGTCTCCTGTGGACAGGACACATGGATGCTGGAATCACCCAGAGCCCAAGACACAAGGTCACAGAGACAGGAACACCAGTGACTCTGAGATGTCACCAGACTGAGAACCACCGCTATATGTACTGGTATCGACAAGACCCGGGGCATGGGCTGAGGCTGATCCATTACTCATATGGTGTTAAAGATACTGACAAAGGAGAAGTCTCAGATGGCTATAGTGTCTCTAGATCAAAGACAGAGGATTTCCTCCTCACTCTGGAGTCCGCTACCAGCTCCCAGACATCTGTGTACTTCTGTGCCATCAGTGAGTCTTTTGAAAGCAGTGATATAACTCTAGGTAAATGCTATGTCTACTAATTATAGTTTCTTAATTTTCATAGCTATATTATGAAAAGAGTAAATTGAAGAAATGGAAACTGCAAATTACACCAAGGTGACAGAATTTGTTCTCACTGGCCTATCCCAGACTCCAGAGGTCCAACTAGTCCTATTTGTTATATTTCTATCCTTCTATTTGTTCATCCTACCAGGAAATATCCTTATCATTTGCACCATCAGTCTAGACCCTCATCTGACCTCTCCTATGTATTTCCTGTTGGCTAATCTGGCCTTCCTTGATATTTGGTACTCTTCCATTACAGCCCCTGAAATGCTCATAGACTTCTTTGTGGAGAGGAAGATAATTTCTTTTGATGGATGCATTGCACAGCTCTTCTTCTTACACTTTGCTGGGGCTTCGGAGATGTTCTTGCTCACAGTGATGGCCTTTGACCTCTACACTGCTATCTGCCGACCCCTCCACTATGCTACCATCATGAATCAACGTCTCTGCTGTATCCTGGTGGCTCTCTCCTGGAGGGGGGGCTTCATTCATTCTATCATACAGGTGGCTCTCATTGTTCGACTTCCTTTCTGTGGGCCCAATGAGTTAGACAGTTACTTCTGTGACATCACACAGGTTGTCCGGATTGCCTGTGCCAACACCTTCCCAGAGGAGTTAGTGATGATCTGTAGTAGTGGTCTGATCTCTGTGGTGTGTTTGATTGCTCTGTTAATGTCCTATGCCTTCCTTCTGGCCTTGCTCAAGAAACTTTCAGGCTCAGGTGAGAATACCAACAGGGCCATGTCCACCTGCTATTCCCACATTACCATTGTGGTGCTAATGTTTGGGCCATCCATCTACATTTATGCTCGCCCATTTGACTCGTTTTCCCTAGATAAAGTGGTGTCTGTGTTCAATACTTTAATATTCCCTTTACGTAATCCCATTATTTACACATTGAGAAACAAGGAAGTAAAGGCAGCCATGAGGAAGTTGGTCACCAAATATATTTTGTGTAAAGAGAAGTGAAAGATAAATTATACATTTTATAGTTCCCCTGAGGATCATTGTCC",
+        "NM_005": "GGGCGCGCCGCTTCCGCTTAAATAACGGCGGGGGAGGCCGCGGTCGGTCTCAGTCGCCGCTGCCAGCTCTCGCACTCTGTTCTTCCGCCGCTCCGCCGTCGCGTTTCTCTGCCGGTCGCAATGGAAGAAGAGATCGCCGCGCTGGTCATTGACAATGGCTCCGGCATGTGCAAAGCTGGTTTTGCTGGGGACGACGCTCCCCGAGCCGTGTTTCCTTCCATCGTCGGGCGCCCCAGACACCAGGGCGTCATGGTGGGCATGGGCCAGAAGGACTCCTACGTGGGCGACGAGGCCCAGAGCAAGCGTGGCATCCTGACCCTGAAGTACCCCATTGAGCATGGCATCGTCACCAACTGGGACGACATGGAGAAGATCTGGCACCACACCTTCTACAACGAGCTGCGCGTGGCCCCGGAGGAGCACCCAGTGCTGCTGACCGAGGCCCCCCTGAACCCCAAGGCCAACAGAGAGAAGATGACTCAGATTATGTTTGAGACCTTCAACACCCCGGCCATGTACGTGGCCATCCAGGCCGTGCTGTCCCTCTACGCCTCTGGGCGCACCACTGGCATTGTCATGGACTCTGGAGACGGGGTCACCCACACGGTGCCCATCTACGAGGGCTACGCCCTCCCCCACGCCATCCTGCGTCTGGACCTGGCTGGCCGGGACCTGACCGACTACCTCATGAAGATCCTCACTGAGCGAGGCTACAGCTTCACCACCACGGCCGAGCGGGAAATCGTGCGCGACATCAAGGAGAAGCTGTGCTACGTCGCCCTGGACTTCGAGCAGGAGATGGCCACCGCCGCATCCTCCTCTTCTCTGGAGAAGAGCTACGAGCTGCCCGATGGCCAGGTCATCACCATTGGCAATGAGCGGTTCCGGTGTCCGGAGGCGCTGTTCCAGCCTTCCTTCCTGGGTATGGAATCTTGCGGCATCCACGAGACCACCTTCAACTCCATCATGAAGTGTGACGTGGACATCCGCAAAGACCTGTACGCCAACACGGTGCTGTCGGGCGGCACCACCATGTACCCGGGCATTGCCGACAGGATGCAGAAGGAGATCACCGCCCTGGCGCCCAGCACCATGAAGATCAAGATCATCGCACCCCCAGAGCGCAAGTACTCGGTGTGGATCGGTGGCTCCATCCTGGCCTCACTGTCCACCTTCCAGCAGATGTGGATTAGCAAGCAGGAGTACGACGAGTCGGGCCCCTCCATCGTCCACCGCAAATGCTTCTAAACGGACTCAGCAGATGCGTAGCATTTGCTGCATGGGTTAATTGAGAATAGAAATTTGCCCCTGGCAAATGCACACACCTCATGCTAGCCTCACGAAACTGGAATAAGCCTTCGAAAAGAAATTGTCCTTGAAGCTTGTATCTGATATCAGCACTGGATTGTAGAACTTGTTGCTGATTTTGACCTTGTATTGAAGTTAACTGTTCCCCTTGGTATTTGTTTAATACCCTGTACATATCTTTGAGTTCAACCTTTAGTACGTGTGGCTTGGTCACTTCGTGGCTAAGGTAAGAACAGGCTGGCAAGAACCAGTTGTTTTGTCTTGCGGGTCTGTCAGGGTTGGAAAGTCCAAGCCGTAGGACCCAGTTTCCTTTCTTAGCTGATGTCTTTGGCCAGAACACCGTGGGCTGTTACTTGCTTTGAGTTGGAAGCGGTTTGCATTTACGCCTGTAAATGTATTCATTCTTAATTTATGTAAGGTTTTTTTTGTACGCAATTCTCGATTCTTTGAAGAGATGACAACAAATTTTGGTTTTCTACTGTTATGTGAGAACATTAGGCCCCAGCAACACGTCATTGTGTAAGGAAAAATAAAAGTGCTGCCGTAACCAA",
+    }
+
+    designer = CDSsgRNADesigner("TP53", test_transcripts)
+    
+    # 寻找通用sgRNA
+    universal = designer.design(require_all=True)
+    print(f"找到 {len(universal)} 条通用sgRNA:")
+    for sg in universal[:3]:
+        print(f"Seq: {sg['sequence']} ({sg['strand']}链)")
+        print(f"GC: {sg['gc_content']}, 评分: {sg['score']}")
+        print(f"靶向转录本: {len(sg['positions'])}个\n")
+    
+    # 寻找任意sgRNA
+    any_sg = designer.design(require_all=False)
+    print(f"\n总候选sgRNA: {len(any_sg)} 条")
+

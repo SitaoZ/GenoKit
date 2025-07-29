@@ -1,4 +1,0 @@
-[console_scripts]
-featurExtract = featurExtract.command_gff:main
-genBankExtract = featurExtract.command_gb:main
-

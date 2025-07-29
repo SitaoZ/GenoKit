@@ -1,10 +1,10 @@
-.. featurExtract documentation master file, created by
-   sphinx-quickstart on Mon Apr 15 15:54:54 2024.
+.. GenoKit documentation master file, created by
+   sphinx-quickstart on Tue Jul 29 22:09:45 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to featurExtract's documentation!
-=========================================
+Welcome to GenoKit's documentation!
+===================================
 
 .. toctree::
    :maxdepth: 2

@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'featurExtract'
-copyright = '2024, Sitao Zhu'
+project = 'GenoKit'
+copyright = '2025, Sitao Zhu'
 author = 'Sitao Zhu'
 
 # The full version, including alpha/beta/rc tags
