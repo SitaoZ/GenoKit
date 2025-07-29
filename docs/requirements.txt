@@ -1,0 +1,9 @@
+pyfaidx==0.6.0
+pyfastx==2.0.2
+pysam==0.16.0.1
+requests==2.25.1
+soupsieve==1.9.5
+Sphinx==2.4.0
+tqdm==4.64.0
+traitlets==4.3.3
+twine==3.4.1
