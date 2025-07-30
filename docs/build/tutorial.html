@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tutorial &#8212; GenoKit v0.2.6 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example" href="example.html" />
+    <link rel="prev" title="Installation" href="install.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial introduces the text-based usage and workflow in GenoKit.
+GenoKit is designed for GFF and GTF file, meanwhile GenBankExtract is suited for GenBank file.</p>
+<p><cite>GenoKit</cite> is <a class="reference external" href="https://github.com/SitaoZ/GenoKit">tested</a> with Python 3.8</p>
+<div class="section" id="quick-start">
+<h2>Quick-start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p>Find featurextract in command line and show the commands provided.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># find the GenoKit exec path</span>
+which GenoKit
+/opt/anaconda3/bin/GenoKit
+<span class="c1"># show help info</span>
+GenoKit -h
+$ GenoKit -h
+
+<span class="c1">#    ______                 __ __ _ __</span>
+<span class="c1">#   / ____/__  ____  ____  / //_/(_) /_</span>
+<span class="c1">#  / / __/ _ \/ __ \/ __ \/ ,&lt;  / / __/</span>
+<span class="c1"># / /_/ /  __/ / / / /_/ / /| |/ / /_</span>
+<span class="c1"># \____/\___/_/ /_/\____/_/ |_/_/\__/</span>
+<span class="c1">#</span>
+<span class="c1">#   GenoKit - Genome and Gene ToolKit v0.2.6</span>
+<span class="c1">#   Contact: Sitao Zhu &lt;zhusitao1990@163.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1">#   Usage:</span>
+<span class="c1">#     GenoKit &lt;command&gt; [parameters]</span>
+<span class="c1">#</span>
+<span class="c1">#   Database:</span>
+<span class="c1">#     create      Create GFF/GTF database</span>
+<span class="c1">#     stat        Database statistics</span>
+<span class="c1">#</span>
+<span class="c1">#   Extract:</span>
+<span class="c1">#     gene        Extract gene sequence</span>
+<span class="c1">#     mrna        Extract mRNA sequence</span>
+<span class="c1">#     transcript  Extract transcript sequence</span>
+<span class="c1">#     exon        Extract exon sequence</span>
+<span class="c1">#     intron      Extract intron sequence</span>
+<span class="c1">#     cds         Extract CDS sequence</span>
+<span class="c1">#     utr         Extract 5&#39;/3&#39;UTR sequence</span>
+<span class="c1">#     uorf        Extract uORF sequence</span>
+<span class="c1">#     dorf        Extract dORF sequence</span>
+<span class="c1">#     promoter    Extract promoter sequence</span>
+<span class="c1">#     terminator  Extract terminator sequence</span>
+<span class="c1">#     igr         Extract intergenic region</span>
+<span class="c1">#</span>
+<span class="c1">#   Design:</span>
+<span class="c1">#     primer      Primer design</span>
+<span class="c1">#     sgrna       Single guide RNA design</span>
+<span class="c1">#     sirna       Small interfering RNA design</span>
+<span class="c1">#     motif       Motif search</span>
+<span class="c1">#</span>
+<span class="c1">#   Visualize:</span>
+<span class="c1">#     vision      Snapshot gene structure</span>
+<span class="c1">#     circos      Circlize genome structure</span>
+<span class="c1">#</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="main-functional-commands">
+<h2>Main functional commands<a class="headerlink" href="#main-functional-commands" title="Permalink to this headline">¶</a></h2>
+<p>In this section, we will introduce commands provided by GenoKit modual.
+How to get help info, and how to use them. Subcommands are show helpdoc when
+the specific command is provided as args in command line.</p>
+<div class="section" id="create">
+<h3>Create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
+<p>The create command use <a class="reference external" href="https://github.com/daler/gffutils">gffutils</a> to build a sqlite database, which
+stores the genome and gene structure need for other functional commands in GenoKit.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit create -h
+<span class="c1">#    usage: GenoKit create [-h] [-f {GFF,GTF}] -g GENOMEFEATURE -o OUTPUT_PREFIX</span>
+<span class="c1">#    optional arguments:</span>
+<span class="c1">#        -h, --help            show this help message and exit</span>
+<span class="c1">#        -f {GFF,GTF}, --file_type {GFF,GTF}</span>
+<span class="c1">#                      genome annotation file</span>
+<span class="c1">#        -g GENOMEFEATURE, --genomefeature GENOMEFEATURE</span>
+<span class="c1">#                      genome annotation file</span>
+<span class="c1">#        -o OUTPUT_PREFIX, --output_prefix OUTPUT_PREFIX</span>
+<span class="c1">#                      database absolute path</span>
+
+<span class="c1"># GFF</span>
+GenoKit create -f GFF -g ath.gff3 -o ath
+<span class="c1"># or GTF</span>
+GenoKit create -f GTF -g ath.gtf  -o ath
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="promoter">
+<h3>Promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h3>
+<p>Promoter sequence is essential for gene functional resaerch. Usually.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit promoter -h
+<span class="c1">#usage: GenoKit promoter [-h] -d DATABASE -f GENOME [-g GENE]</span>
+<span class="c1">#                           [-l PROMOTER_LENGTH] [-u UTR5_UPPER_LENGTH]</span>
+<span class="c1">#                           [-o OUTPUT] [-t {csv,fasta}] [-p]</span>
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta path</span>
+<span class="c1">#  -g GENE, --gene GENE  specific gene; if not given, return whole genes</span>
+<span class="c1">#  -l PROMOTER_LENGTH, --promoter_length PROMOTER_LENGTH</span>
+<span class="c1">#                        promoter length before TSS (default 100 nt)</span>
+<span class="c1">#  -u UTR5_UPPER_LENGTH, --utr5_upper_length UTR5_UPPER_LENGTH</span>
+<span class="c1">#                        5&#39; utr length after TSS (default 10 nt)</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -t {csv,fasta}, --output_format {csv,fasta}</span>
+<span class="c1">#                        output format</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+
+<span class="c1"># All genes in whole gnome</span>
+GenoKit promoter -d ath.GFF -f ath.fa -l <span class="m">200</span> -u <span class="m">100</span> -o promoter.csv --output_format fasta
+<span class="c1"># A given gene</span>
+GenoKit promoter -d ath.GFF -f ath.fa -l <span class="m">200</span> -u <span class="m">100</span> -g AT1G01010 -p --output_format fasta
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="utr">
+<h3>UTR<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h3>
+<p>UTR (untranslated region) sequence is essential for gene functional resaerch. In molecular genetics,
+an UTR refers to either of two sections, one on each side of a coding sequence on a strand of mRNA.
+If it is found on the 5’ side, it is called the 5’ UTR (or leader sequence), or if it is found on
+the 3’ side, it is called the 3’ UTR (or trailer sequence).</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit UTR -h
+<span class="c1">#usage: GenoKit UTR [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                     [-o OUTPUT] [-p] [-s {GFF,GTF}]</span>
+<span class="c1">#</span>
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta file</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript id; if not given, whole transcript</span>
+<span class="c1">#                        will return</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+<span class="c1">#</span>
+<span class="c1"># All transcripts in whole gnome</span>
+GenoKit promoter -d ath.GFF -f ath.fa -o utr.csv -s GFF
+<span class="c1"># A given gene</span>
+GenoKit promoter -d ath.GFF -f ath.fa -i AT1G01010.1 -p -s GFF
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="uorf">
+<h3>uORF<a class="headerlink" href="#uorf" title="Permalink to this headline">¶</a></h3>
+<p>uORF (upstream open reading frame), is an open reading frame (ORF) within the 5’ untranslated region (5’UTR) of an mRNA.
+uORFs can regulate eukaryotic gene expression and repress downstream expression of the primary ORF.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit uORF -h
+
+<span class="c1">#usage: GenoKit uORF [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                      [-t {csv,fasta,gff}] [-o OUTPUT] [-m] [-n]</span>
+<span class="c1">#                      [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript id; if not given, whole transcript</span>
+<span class="c1">#                        will return</span>
+<span class="c1">#  -t {csv,fasta,gff}, --output_format {csv,fasta,gff}</span>
+<span class="c1">#                        output format</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -m, --schematic_without_intron</span>
+<span class="c1">#                        schematic figure file for uORF, CDS and transcript</span>
+<span class="c1">#                        without intron</span>
+<span class="c1">#  -n, --schematic_with_intron</span>
+<span class="c1">#                        schematic figure file for uORF, CDS and transcript</span>
+<span class="c1">#                        with intron</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="cds">
+<h3>CDS<a class="headerlink" href="#cds" title="Permalink to this headline">¶</a></h3>
+<p>The CDS (coding sequence), is the portion of a gene’s DNA or RNA that codes for protein.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit CDS -h
+
+<span class="c1">#usage: GenoKit uORF [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                      [-t {csv,fasta,gff}] [-o OUTPUT] [-m] [-n]</span>
+<span class="c1">#                      [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript id; if not given, whole transcript</span>
+<span class="c1">#                        will return</span>
+<span class="c1">#  -t {csv,fasta,gff}, --output_format {csv,fasta,gff}</span>
+<span class="c1">#                        output format</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -m, --schematic_without_intron</span>
+<span class="c1">#                        schematic figure file for uORF, CDS and transcript</span>
+<span class="c1">#                        without intron</span>
+<span class="c1">#  -n, --schematic_with_intron</span>
+<span class="c1">#                        schematic figure file for uORF, CDS and transcript</span>
+<span class="c1">#                        with intron</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="dorf">
+<h3>dORF<a class="headerlink" href="#dorf" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit dORF -h
+<span class="c1">#usage: GenoKit dORF [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                      [-t {csv,fasta,gff}] [-o OUTPUT]</span>
+<span class="c1">#                      [-m SCHEMATIC_WITHOUT_INTRON]</span>
+<span class="c1">#                      [-n SCHEMATIC_WITH_INTRON] [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript id; if not given, whole transcript</span>
+<span class="c1">#                        will return</span>
+<span class="c1">#  -t {csv,fasta,gff}, --output_format {csv,fasta,gff}</span>
+<span class="c1">#                        output format</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -m SCHEMATIC_WITHOUT_INTRON, --schematic_without_intron SCHEMATIC_WITHOUT_INTRON</span>
+<span class="c1">#                        schematic figure file for dORF, CDS and transcript</span>
+<span class="c1">#                        without intron</span>
+<span class="c1">#  -n SCHEMATIC_WITH_INTRON, --schematic_with_intron SCHEMATIC_WITH_INTRON</span>
+<span class="c1">#                        schematic figure file for dORF, CDS and transcript</span>
+<span class="c1">#                        with intron</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="cdna-mrna">
+<h3>cDNA/mRNA<a class="headerlink" href="#cdna-mrna" title="Permalink to this headline">¶</a></h3>
+<p>In genetics, complementary DNA (cDNA) is DNA synthesized from a single-stranded RNA (e.g., messenger RNA (mRNA) or microRNA (miRNA)) template in a reaction catalyzed by the enzyme reverse transcriptase.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit cdna -h
+<span class="c1">#usage: GenoKit cdna [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                      [-o OUTPUT] [-t {csv,fasta}] [-p] [-u]</span>
+<span class="c1">#                      [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript; if not given, return whole</span>
+<span class="c1">#                        transcripts</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -t {csv,fasta}, --output_format {csv,fasta}</span>
+<span class="c1">#                        output format</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+<span class="c1">#  -u, --upper           upper CDS and lower utr</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="gene">
+<h3>Gene<a class="headerlink" href="#gene" title="Permalink to this headline">¶</a></h3>
+<p>gene</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit gene -h
+<span class="c1">#usage: GenoKit gene [-h] -d DATABASE -f GENOME [-g GENE] [-o OUTPUT]</span>
+<span class="c1">#                      [-p]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -g GENE, --gene GENE  specific gene; if not given, return whole genes</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="exon">
+<h3>Exon<a class="headerlink" href="#exon" title="Permalink to this headline">¶</a></h3>
+<p>An exon is any part of a gene that will form a part of the final mature RNA produced by that gene after introns have been removed by RNA splicing.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit exon -h
+<span class="c1">#usage: GenoKit exon [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                      [-o OUTPUT] [-p] [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript id; needed</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="intron">
+<h3>Intron<a class="headerlink" href="#intron" title="Permalink to this headline">¶</a></h3>
+<p>An intron is any nucleotide sequence within a gene that is removed by RNA processing during production of the final RNA product.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit intron -h
+<span class="c1">#usage: GenoKit intron [-h] -d DATABASE -f GENOME [-i TRANSCRIPT]</span>
+<span class="c1">#                        [-o OUTPUT] [-p] [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -i TRANSCRIPT, --transcript TRANSCRIPT</span>
+<span class="c1">#                        specific transcript id; needed</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output file path</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database or GFF database</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="igr">
+<h3>IGR<a class="headerlink" href="#igr" title="Permalink to this headline">¶</a></h3>
+<p>An IGR (intergenic region) is a stretch of DNA sequences located between genes.</p>
+<div class="highlight-bash notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="highlight"><pre><span></span>GenoKit IGR -h
+<span class="c1">#usage: GenoKit IGR [-h] -d DATABASE -f GENOME [-l IGR_LENGTH]</span>
+<span class="c1">#                         [-o OUTPUT] [-p] [-s {GFF,GTF}]</span>
+
+<span class="c1">#optional arguments:</span>
+<span class="c1">#  -h, --help            show this help message and exit</span>
+<span class="c1">#  -d DATABASE, --database DATABASE</span>
+<span class="c1">#                        database generated by subcommand create</span>
+<span class="c1">#  -f GENOME, --genome GENOME</span>
+<span class="c1">#                        genome fasta</span>
+<span class="c1">#  -l IGR_LENGTH, --IGR_length IGR_LENGTH</span>
+<span class="c1">#                        IGR length threshold</span>
+<span class="c1">#  -o OUTPUT, --output OUTPUT</span>
+<span class="c1">#                        output fasta file path</span>
+<span class="c1">#  -p, --print           output to stdout</span>
+<span class="c1">#  -s {GFF,GTF}, --style {GFF,GTF}</span>
+<span class="c1">#                        GTF database only contain protein genes, while GFF</span>
+<span class="c1">#                        database contain protein genes and nocoding genes</span>
+</pre></div>
+</td></tr></table></div>
+<ul class="simple">
+<li><p>python &gt;= 3.7.6 <a class="reference external" href="https://www.python.org/">python</a></p></li>
+<li><p>pandas &gt;= 1.2.4 <a class="reference external" href="https://pandas.pydata.org/docs/">pandas</a></p></li>
+<li><p>gffutils &gt;= 0.10.1 <a class="reference external" href="https://pythonhosted.org/gffutils/">gffutils</a></p></li>
+<li><p>setuptools &gt;= 49.2.0 <a class="reference external" href="https://pypi.org/project/setuptools/">setuptools</a></p></li>
+<li><p>BioPython &gt;= 1.78 <a class="reference external" href="https://biopython.org/wiki/Documentation/">biopython</a></p></li>
+</ul>
+<p>Install them all with <cite>conda</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">--</span><span class="n">channel</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="o">--</span><span class="n">channel</span> <span class="n">python</span> <span class="n">pandas</span> <span class="n">gffutils</span> <span class="n">setuptools</span> <span class="n">biopython</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick-start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-functional-commands">Main functional commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="install.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="example.html" title="next chapter">Example</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2025, Sitao Zhu.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/tutorial.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

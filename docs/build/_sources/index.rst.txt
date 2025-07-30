@@ -9,6 +9,13 @@ Welcome to GenoKit's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   
+   introduction
+   install
+   tutorial
+   example
+   faq
+   about
 
 
 
