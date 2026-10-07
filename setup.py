@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-import os
+from pathlib import Path
 
-def readme():
-    with open("README.md") as f:
-        long_description = f.read()
-        return long_description
+from setuptools import find_packages, setup
 
-from setuptools import setup 
 from GenoKit.version import __version__
 
-PACKAGES = [
-    "GenoKit",
-    "GenoKit.commands",
-    "GenoKit.database",
-    "GenoKit.utils"
-]
+
+ROOT = Path(__file__).resolve().parent
+
+
+def readme():
+    return (ROOT / "README.md").read_text(encoding="utf-8")
+
+
 setup(
     name='GenoKit',
     version=__version__,
@@ -30,11 +28,19 @@ setup(
     author_email='zhusitao1990@163.com',
     url='https://github.com/SitaoZ/GenoKit.git',
     include_package_data=True, # done via MANIFEST.in under setuptools
-    packages=PACKAGES,
+    package_data={'GenoKit.example': ['*.csv']},
+    packages=find_packages(exclude=("test", "test.*")),
     license='MIT',
-    install_requires = ['argparse>=1.1', 
-                        'pandas>=1.2.4', 
-                        'gffutils>=0.10.1',
-                        'setuptools>=49.2.0',
-                        'biopython>=1.78'],
-    python_requires=">=3.7.6")
+    install_requires = ['pandas>=2.2.3',
+                        'setuptools>=72.1.0',
+                        'biopython>=1.86',
+                        'python-louvain>=0.16',
+                        'python-circos>=0.3.0',
+                        'tabulate>=0.9.0',
+                        'tqdm>=4.0',
+                        'Django>=5.2.8',
+                        'pyfaidx>=0.9',
+                        'matplotlib>=3.10.0',
+                        'requests>=2.32.3',
+                        'networkx>=3.6.1'],
+    python_requires=">=3.10")
