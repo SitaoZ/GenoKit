@@ -20,8 +20,7 @@ Find featurextract in command line and show the commands provided.
     /opt/anaconda3/bin/GenoKit
     # show help info
     GenoKit -h 
-    $ GenoKit -h 
-
+    
     #    ______                 __ __ _ __ 
     #   / ____/__  ____  ____  / //_/(_) /_
     #  / / __/ _ \/ __ \/ __ \/ ,<  / / __/
