@@ -1,507 +1,521 @@
-# Overview
+# GenoKit
 
-GenoKit is a Python package for bioinformatics, containing two command programs. The first, GenoKit, includes ten subroutines: create, gene, promoter, UTR, uORF, CDS, dORF, exon, intron and intergenic. The create subroutine is used to create a database, while the promoter subroutine is used to extract promoter sequences. The uORF subroutine extracts upstream open reading frames sequences, and the UTR subroutine extracts untranslated region sequences. The CDS subroutine extracts coding sequences and the intergenic subroutine extracts intergenic sequences between two genes. The second command program, genBankExtract, includes four subroutines: gene, CDS, rRNA and tRNA.
+GenoKit is a Python command-line toolkit for genome annotation databases,
+genomic feature extraction, sequence design, and visualization. This README
+describes the **1.0.0 source implementation**.
 
+The main command, `GenoKit`, works with GFF3/GTF annotations and reference FASTA
+files. Annotation databases use SQLite by default, with lazy access to gene
+models and compatibility with historical pickle databases.
 
-## Brief introduction of GenoKit package
+## Installation
 
-### Install
-Two way offer to install GenoKit module.
-
-#### install command line
+Install the published package:
 
 ```bash
-pip install GenoKit
-# other
+python -m pip install GenoKit
+```
+
+Or install this source checkout:
+
+```bash
 git clone https://github.com/SitaoZ/GenoKit.git
 cd GenoKit
-python setup.py install
+python -m pip install .
 ```
 
-#### Requirements
+For editable development, use `python -m pip install -e .` instead. The published
+package may differ from this checkout; inspect `GenoKit --version` and the
+installed command's `-h` output when using another release.
 
-python >= 3.7.6 [python](https://www.python.org/)  
-pandas >= 1.2.4 [pandas](https://pandas.pydata.org/docs/)  
-gffutils >= 0.10.1 [gffutils](https://pythonhosted.org/gffutils/)  
-setuptools >= 49.2.0 [setuptools](https://pypi.org/project/setuptools/)  
-biopython >= 1.78 [biopython](https://biopython.org/wiki/Documentation/)  
+### Requirements
 
-### Usage
-GenoKit is designed for GFF and GTF file  
-and GenBankExtract is suited for GenBank file. 
+The requirements declared in `setup.py` are:
 
-#### GenoKit
+| Dependency | Minimum version |
+| --- | --- |
+| Python | 3.10 |
+| pandas | 2.2.3 |
+| setuptools | 72.1.0 |
+| biopython | 1.86 |
+| python-louvain | 0.16 |
+| python-circos | 0.3.0 |
+| tabulate | 0.9.0 |
+| tqdm | 4.0 |
+| Django | 5.2.8 |
+| pyfaidx | 0.9 |
+| matplotlib | 3.10.0 |
+| requests | 2.32.3 |
+| networkx | 3.6.1 |
+
+`pip` resolves dependency-specific Python requirements as well as GenoKit's
+Python requirement. `gffutils` is no longer a declared dependency.
+
+Jellyfish is an external executable used for genome-scale k-mer counting and
+querying `.jf` datasets. Supply its path with `-j` to `GenoKit kmer`, or with
+`--jellyfish` to a design command. The Python k-mer engine supports small inputs
+up to 250 MiB and k values from 1 to 31.
+
+## Command overview
 
 ```bash
-# gff or gtf database
-
 GenoKit -h
-Program:  GenoKit (tools for genomic feature extract)
-Version:  0.2.6.0
-Contact:  Sitao Zhu <zhusitao1990@163.com>
-Usage  :  GenoKit <command> [parameters] 
-Command: 
-          create        create GFF/GTF database
-          stat          database statistics
-          cds           extract CDS sequence
-          dorf          extract dORF sequence
-          exon          extract exon sequence
-          gene          extract gene sequence
-          intron        extract intron sequence
-          igr           extract intergenic region
-          mrna          extract mRNA sequence
-          promoter      extract promoter sequence
-          terminator    extract terminator sequence
-          transcript    extract transcript sequence
-          uorf          extract uORF sequence
-          utr           extract 5/3UTR sequence
-```
-
-- create
-
-```bash
+GenoKit --version
 GenoKit create -h
-usage: GenoKit create [-h] -g GENOMEFEATURE -o OUTPUT -p PREFIX
-                            [-s {gff,gtf}]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -g GENOMEFEATURE, --genomefeature GENOMEFEATURE
-                        genome annotation file, gff or gtf
-  -o OUTPUT, --output OUTPUT
-                        database output dir path
-  -p PREFIX, --prefix PREFIX
-                        database prefix
-  -s {gff,gtf}, --style {gff,gtf}
-                        genome annotation file format
 ```
 
-- stat
-```bash
-GenoKit stat -h
-usage: GenoKit stat [-h] -d DATABASE -g GENOME -o OUTPUT [-s {gff,gtf}]
+Use `GenoKit <command> -h` for the complete options of any command. Subcommand
+names and annotation styles are lowercase.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database created from creat command
-  -g GENOME, --genome GENOME
-                        genome fasta path
-  -o OUTPUT, --output OUTPUT
-                        stat output
-  -s {gff,gtf}, --style {gff,gtf}
-                        genome annotation file format
-```
+| Group | Command | Purpose |
+| --- | --- | --- |
+| Database | `create` | Build a GFF3/GTF annotation database |
+| Database | `fasta` | Extract selected FASTA records |
+| Database | `iupac` | Display nucleotide, amino-acid, or codon tables |
+| Database | `kmer` | Build genome/transcriptome k-mer catalogues |
+| Database | `stat` | Summarize annotation and genome statistics |
+| Extract | `gene` | Extract genomic gene sequences |
+| Extract | `transcript` | Extract spliced transcript sequences |
+| Extract | `exon` | Extract transcript exon sequences |
+| Extract | `intron` | Extract intron sequences |
+| Extract | `cds` | Extract coding sequences |
+| Extract | `utr` | Extract 5′ and 3′ untranslated regions |
+| Extract | `uorf` | Extract upstream open reading frames |
+| Extract | `dorf` | Extract downstream open reading frames |
+| Extract | `promoter` | Extract regions around the gene's 5′ boundary |
+| Extract | `terminator` | Extract regions around the gene's 3′ boundary |
+| Extract | `igr` | Extract intergenic regions |
+| Design | `barcode` | Generate DNA or RNA barcodes |
+| Design | `motif` | Search sequence motifs |
+| Design | `primer` | Design primer pairs on genomic DNA or cDNA |
+| Design | `sgrna` | Design CRISPR single-guide RNAs |
+| Design | `shrna` | Design small hairpin RNAs |
+| Design | `sirna` | Design small interfering RNAs |
+| Visualize | `view` | Draw annotated gene structures |
+| Visualize | `circos` | Draw circular genome plots |
+| Visualize | `ppi` | Analyze and draw protein interaction networks |
+| Visualize | `hgvs` | Visualize DNA, RNA, and protein variants |
 
-- cds
+`mrna` is not an active command; use `transcript` for spliced sequences. The
+reserved `expp` parser is not exposed by the public command dispatcher.
 
-```bash
-GenoKit cds -h
-usage: GenoKit cds [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                         [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
-                         [-r {mrna,all}] [-s {gff,gtf}] [-v]
+## Quick start
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of cds extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for extract cds, (default: mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -v, --print           output to stdout. -v and -o option are mutually
-                        exclusive
-```
-- dorf 
-```bash
-GenoKit dorf -h 
-usage: GenoKit dorf [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                          [-i TRANSCRIPT] [-l LENGTH] [-m] [-n] [-o OUTPUT]
-                          [-p PROCESS] [-r {mrna,all}] [-s {gff,gtf}] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -l LENGTH, --length LENGTH
-                        dorf length, (default: 6)
-  -m, --schematic_without_intron
-                        schematic figure file for dorf, cds and transcript
-                        without intron
-  -n, --schematic_with_intron
-                        schematic figure file for dorf, cds and transcript
-                        with intron
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of dorf extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for dorf extraction (default: mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -v, --print           output to stdout. -v and -o option are mutually
-                        exclusive
-```
-
-- exon
-```bash
-GenoKit exon -h 
-usage: GenoKit exon [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                          [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
-                          [-r {mrna,all}] [-s {gff,gtf}] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of exon extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for exon extraction (default: mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -v, --print           output to stdout
-```
-
-- gene
-```bash
-GenoKit gene -h 
-usage: GenoKit gene [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
-                          [-i GENE] [-o OUTPUT] [-p] [-s {gff,gtf}]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff,gtf}, --output_format {csv,fasta,gff,gtf}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i GENE, --gene GENE  specific gene (optional); if not given, return whole
-                        genes
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p, --print           output to stdout
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-```
-
-- intron
-```bash
-GenoKit intron -h 
-usage: GenoKit intron [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                            [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
-                            [-r {mrna,all}] [-s {gff,gtf}] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of exon extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for intron extraction (default: mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -v, --print           output to stdout
-```
-
-- igr
-```bash
-GenoKit igr -h 
-usage: GenoKit igr [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                         [-l IGR_LENGTH] [-o OUTPUT] [-p PROCESS]
-                         [-s {gff,gtf}] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -l IGR_LENGTH, --igr_length IGR_LENGTH
-                        igr length threshold
-  -o OUTPUT, --output OUTPUT
-                        output fasta file path
-  -p PROCESS, --process PROCESS
-                        number of igr extract process, (default: 4)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database only contain protein genes, while gff
-                        database contain protein genes and nocoding genes
-  -v, --print           output to stdout
-```
-
-
-- mrna
-```bash
-GenoKit mrna -h 
-usage: GenoKit mrna [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
-                          [-i TRANSCRIPT] [-o OUTPUT] [-p] [-s {gff,gtf}] [-u]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta}, --output_format {csv,fasta}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p, --print           output to stdout
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -u, --upper           upper cds and lower utr
-```
-
-- promoter
-```bash
-GenoKit promoter -h 
-usage: GenoKit promoter [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
-                              [-i GENE] [-l PROMOTER_LENGTH] [-o OUTPUT]
-                              [-p PROCESS] [-u UTR5_UPPER_LENGTH] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta}, --output_format {csv,fasta}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta path
-  -i GENE, --gene GENE  specific gene (optional); if not given, return whole
-                        genes
-  -l PROMOTER_LENGTH, --promoter_length PROMOTER_LENGTH
-                        promoter length before TSS (default: 100)
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of promoter extract process, (default: 4)
-  -u UTR5_UPPER_LENGTH, --utr5_upper_length UTR5_UPPER_LENGTH
-                        5' utr length after TSS (default: 10)
-  -v, --print           output to stdout
-```
-
-- terminator
-```bash
-GenoKit terminator -h 
-usage: GenoKit terminator [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
-                                [-i GENE] [-l TERMINATOR_LENGTH] [-o OUTPUT]
-                                [-u UTR3_LOWER_LENGTH] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta}, --output_format {csv,fasta}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta path
-  -i GENE, --gene GENE  specific gene (optional); if not given, return whole
-                        genes
-  -l TERMINATOR_LENGTH, --terminator_length TERMINATOR_LENGTH
-                        terminator length (default: 100)
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -u UTR3_LOWER_LENGTH, --utr3_lower_length UTR3_LOWER_LENGTH
-                        3' length (default: 10)
-  -v, --print           output to stdout
-```
-- transcript
-```bash
-GenoKit transcript -h 
-usage: GenoKit transcript [-h] -d DATABASE [-f {csv,fasta}] -g GENOME
-                                [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
-                                [-r {mrna,all}] [-s {gff,gtf}] [-u] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta}, --output_format {csv,fasta}
-                        output format
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of cDNA extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for extract transcript, (default:
-                        mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -u, --upper           upper cds and lower utr
-  -v, --print           output to stdout
-```
-
-- uorf
-```bash
-GenoKit uorf -h 
-usage: GenoKit uorf [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                          [-i TRANSCRIPT] [-l LENGTH] [-m] [-n] [-o OUTPUT]
-                          [-p PROCESS] [-r {mrna,all}] [-s {gff,gtf}] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format (default: csv)
-  -g GENOME, --genome GENOME
-                        genome fasta
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -l LENGTH, --length LENGTH
-                        uorf length, (default: 6)
-  -m, --schematic_without_intron
-                        schematic figure file for uorf, cds and transcript
-                        without intron
-  -n, --schematic_with_intron
-                        schematic figure file for uorf, cds and transcript
-                        with intron
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of uorf extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for uorf extraction (default: mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -v, --print           output to stdout. -v and -o option are mutually
-                        exclusive
-
-```
-
-- utr
-```bash
-GenoKit utr -h 
-usage: GenoKit utr [-h] -d DATABASE [-f {csv,fasta,gff}] -g GENOME
-                         [-i TRANSCRIPT] [-o OUTPUT] [-p PROCESS]
-                         [-r {mrna,all}] [-s {gff,gtf}] [-v]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -d DATABASE, --database DATABASE
-                        database generated by subcommand create
-  -f {csv,fasta,gff}, --output_format {csv,fasta,gff}
-                        output format (default: csv)
-  -g GENOME, --genome GENOME
-                        genome fasta file
-  -i TRANSCRIPT, --transcript TRANSCRIPT
-                        specific transcript (optional); if not given, return
-                        whole transcripts
-  -o OUTPUT, --output OUTPUT
-                        output file path
-  -p PROCESS, --process PROCESS
-                        number of utr extract process, (default: 4)
-  -r {mrna,all}, --rna_feature {mrna,all}
-                        The type of RNA for extract utr, (default: mrna)
-  -s {gff,gtf}, --style {gff,gtf}
-                        gtf database or gff database
-  -v, --print           output to stdout. -v and -o option are mutually
-                        exclusive
-```
-#### genBankExtract
-
-```bash 
-# GenBank database
-which genBankExtract
-genBankExtract -h
-genBankExtract gene -h
-genBankExtract CDS  -h
-genBankExtract rRNA -h
-genBankExtract tRNA -h
-```
-### Examples
-
-#### GenoKit
+The examples below assume that `human.gtf` and `human.fa` describe the same
+assembly and use matching chromosome identifiers. Replace the example paths
+and gene/transcript IDs with those from your annotation.
 
 ```bash
-# step 1 create database
-time GenoKit create -s GTF -g Araport11_GTF_genes_transposons.Mar202021.gtf -o test/ -p ath
+mkdir -p results
 
-# step 2 command
-# cds 
-time GenoKit cds -d test/ath.GFF -g ath_chr.fa -r all -f csv -p 1 -o test/zhusitao_cds3.csv
-time GenoKit cds -d test/ath.GFF -g ath_chr.fa -r all -f fasta -p 1 -o test/zhusitao_cds3.fa
-time GenoKit cds -d test/ath.GFF -g ath_chr.fa -r all -f gff -p 1 -o test/zhusitao_cds3.gff
+# Build the annotation database and check/build the FASTA index.
+GenoKit create -s gtf -a human.gtf -g human.fa -o results -p human
 
-# transcript
-time GenoKit transcript -d test/ath.GFF -g ath_chr.fa -r all -f csv -p 1 -o test/zhusitao_transcript.csv
+# Summarize the annotation and genome.
+GenoKit stat -d results/human.gtf.sqlite -g human.fa -s gtf -o results/stat.csv
 
+# Extract all CDS sequences.
+GenoKit cds -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f fasta -o results/cds.fa
 
-# promoter 
-time GenoKit promoter -d test/ath.GFF -f csv -g ath_chr.fa -l 10 -o test/zhusitao_promoter.csv -u 0 -i AT1G01010 -v 
-
-# terminator
-time GenoKit terminator -d test/ath.GFF -f csv -g ath_chr.fa -l 10 -o test/zhusitao_terminator.csv -u 0 -i AT1G01010 -v 
-
-# exon 
-time GenoKit exon -d test/ath.GFF -f fasta -g ath_chr.fa -o test/zhusitao_exon.fa -s gff 
-
-# intron 
-time GenoKit intron -d test/ath.GFF -f fasta -g ath_chr.fa -o test/zhusitao_intron.fa -s gff
-
-# uorf 
-time GenoKit uorf -d test/ath.GFF -g ath_chr.fa -l 1 -r all -f csv -o test/zhusitao_uORF.csv -s gff
-
-# dorf
-time GenoKit dorf -d test/ath.GFF -g ath_chr.fa -l 1 -r all -f csv -o test/zhusitao_dorf.csv -s gff
+# Extract all mature transcript sequences.
+GenoKit transcript -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f fasta -o results/transcripts.fa
 ```
-    
-#### genBankExtract
 
-```bash 
-# GenBank step 3
-genBankExtract gene -g NC_000932.gb -f dna -p  
-genBankExtract CDS  -g NC_000932.gb -f dna -p 
-genBankExtract rRNA -g NC_000932.gb -f dna -p
-genBankExtract tRNA -g NC_000932.gb -f dna -p
+### Input and output conventions
+
+- Use `-s gtf` for GTF or `-s gff` for GFF3. Supply the matching style explicitly
+  in annotation-based extraction and design commands.
+- Gene selectors (`-i` on `gene`, `promoter`, `terminator`, and design commands)
+  take a **gene ID**. Transcript selectors (`-i` on `transcript`, `cds`, `exon`,
+  `intron`, `utr`, `uorf`, and `dorf`) take a **transcript ID**. A reported gene
+  symbol is not a replacement for the annotation ID.
+- Extraction commands accept `-f csv`, `fasta`, `gff`, or `gtf`. Specify `-f`
+  explicitly, especially for `gene` and `terminator`, whose parsers do not set
+  a format default. Sequence-design commands advertise `csv` and `fasta`;
+  examples here use CSV.
+- Supply `-o` for whole-annotation extraction and design, and create its parent
+  directory first. Omitting `-i` processes all applicable records.
+- For a single selected gene/transcript, use `--print` instead of `-o` to print
+  results. Its short form is `-p` for `gene` and `-v` for the other extraction
+  commands. Top-level `GenoKit -v` means version.
+- The old extraction options `--process` and `--rna_feature` are no longer
+  accepted. `-p` and `-r` have other meanings on commands such as `create`,
+  `sgrna`, `shrna`, and `kmer`.
+- Feature coordinates follow the annotation's 1-based inclusive convention.
+  Spliced sequences are assembled from exons and oriented 5′→3′, including
+  reverse complementation for negative-strand transcripts. ORF outputs also
+  contain transcript-relative coordinates; read the relevant column headers.
+
+## Database commands
+
+### `create`
+
+```bash
+# GTF, with SQLite output (default).
+GenoKit create -s gtf -a human.gtf -g human.fa -o results -p human
+# Output: results/human.gtf.sqlite
+
+# GFF3; gzip-compressed annotation is accepted.
+GenoKit create -s gff -a yeast.gff.gz -g yeast.fa -o results -p yeast
+# Output: results/yeast.gff.sqlite
+
+# Historical in-memory/pickle backend.
+GenoKit create -s gtf -a human.gtf -g human.fa -o results -p human \
+  --database-format pickle
+# Output: results/human.gtf.pkl
 ```
-    
+
+Annotation input may be uncompressed or ordinary gzip. Reference FASTA must be
+uncompressed or **BGZF/bgzip-compressed**, not ordinary gzip, for indexed random
+access. By default, `create` checks/builds the `.fai` index and the `.gzi` index
+needed for BGZF FASTA. `--skip-fasta-index` skips this step; subsequent sequence
+access still needs a usable index.
+
+The builder checks annotation content for a GFF3/GTF mismatch with `-s`.
+Readers detect SQLite by file signature and otherwise load the historical
+pickle representation, including existing `.pkl` and `.bin` files. New pickle
+output uses `.pkl`. SQLite construction inserts records incrementally, and
+readers do not deserialize the complete annotation at startup.
+
+### `stat`, `fasta`, and `iupac`
+
+```bash
+# Print statistics, or add -o results/stat.csv to save them.
+GenoKit stat -d results/human.gtf.sqlite -g human.fa -s gtf
+
+# chromosomes.txt contains one FASTA record ID per line, without a header.
+GenoKit fasta -f human.fa -i chromosomes.txt -o results/selected.fa
+
+# Select one table per invocation.
+GenoKit iupac -n
+GenoKit iupac -a
+GenoKit iupac -c
+```
+
+### `kmer`
+
+A single `genokit.kmer.sqlite` catalogue can register multiple k values for
+both `genome` and `transcriptome` sources. Its datasets can be SQLite counts or
+external Jellyfish `.jf` files. Keep registered `.jf` files available when
+moving or sharing a catalogue.
+
+```bash
+# Genome catalogue: complete primer and RNA-target lengths.
+GenoKit kmer -f human.fa --source-type genome --lengths 18-25 \
+  -o results/kmer -r --engine jellyfish -j jellyfish -t 4
+
+# Add spliced-transcript counts to the same catalogue.
+GenoKit kmer --source-type transcriptome \
+  -d results/human.gtf.sqlite -g human.fa --lengths 18-25 \
+  -o results/kmer -r --engine jellyfish -j jellyfish -t 4
+
+# A small FASTA can use the Python engine.
+GenoKit kmer -f small.fa --source-type genome -l 20 \
+  -o results/small_kmer -r --engine python
+
+# Register an existing Jellyfish dataset without recounting.
+GenoKit kmer --register-jf human.fa.kmer.20.jf \
+  --source-type genome -o results/kmer -r -j jellyfish
+```
+
+`--engine` accepts `auto` (default), `jellyfish`, or `python`. `-l` selects a
+single k value (default 18); `--lengths` accepts comma-separated values and
+ranges. `-r` enables reverse-complement counting. `--sqlite-db` overrides the
+catalogue path, which defaults to `OUTPUT_DIR/genokit.kmer.sqlite`.
+For a prebuilt mature-transcript FASTA, use `-f` with
+`--source-type transcriptome` instead of `-d` and `-g`.
+
+## Feature extraction
+
+### Genes, transcripts, CDS, exons, introns, and UTRs
+
+```bash
+GenoKit gene -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f csv -o results/genes.csv
+GenoKit transcript -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f fasta -u -o results/transcripts_marked.fa
+GenoKit cds -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f gff -o results/cds.gff
+GenoKit exon -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f gtf -o results/exons.gtf
+GenoKit intron -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f fasta -o results/introns.fa
+GenoKit utr -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f csv -o results/utr.csv
+
+# Print one gene or transcript; replace these IDs with IDs in your database.
+GenoKit gene -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -i ENSG00000198062 -f fasta --print
+GenoKit transcript -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -i ENST00000343518 -f fasta --print
+```
+
+`transcript -u/--upper` marks CDS in uppercase and UTRs in lowercase. `utr`
+extracts both 5′ and 3′ UTRs. CSV output for annotation-backed features includes
+gene IDs and gene symbols alongside feature-specific columns.
+
+### Promoters, terminators, and intergenic regions
+
+```bash
+GenoKit promoter -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -l 1000 -u 10 -f csv -o results/promoters.csv
+GenoKit terminator -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -l 1000 -u 10 -f fasta -o results/terminators.fa
+GenoKit igr -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -f gff -o results/intergenic.gff
+```
+
+`promoter` uses the gene's strand-aware 5′ boundary: `-l` is the upstream
+length (default 100), and `-u` is the length into the gene (default 10).
+`terminator` uses the strand-aware 3′ boundary: `-l` extends downstream
+(default 100), and `-u` includes the end of the gene (default 10). These commands
+operate on gene boundaries, not on each isoform's separate boundary.
+
+### Upstream and downstream ORFs
+
+```bash
+GenoKit uorf -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -l 6 -f csv -o results/uorf.csv
+GenoKit dorf -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -l 6 -f gff -o results/dorf.gff
+```
+
+`-l/--length` is the ORF length threshold in nucleotides (default 6). The
+extraction output filters out ORFs whose length is less than or equal to this
+threshold. uORFs are classified as upstream, overlapping, or N-terminal
+extension candidates. ORF GFF/GTF output maps spliced coordinates back to the
+genome.
+
+For a selected transcript, the parsers also accept
+`-m/--schematic_without_intron PREFIX` and
+`-n/--schematic_with_intron PREFIX`; these options take string values, not
+boolean flags. For gene-level structure plots, use `view` below.
+
+## Sequence design
+
+### `primer`
+
+Choose the actual PCR template with `--template-type genomic|cdna` (default
+`cdna`). Template selection controls both sequence extraction and the expected
+k-mer reference:
+
+| Template type | Design sequence | Matching `--kmer-source` |
+| --- | --- | --- |
+| `genomic` | One continuous gene interval, including introns, oriented in the gene's 5′→3′ direction | `genome` |
+| `cdna` | Each mature transcript, assembled from exons in 5′→3′ orientation | `transcriptome` |
+
+```bash
+# Genomic DNA: search within the gene interval, including introns.
+GenoKit primer -d results/human.gtf.sqlite -g human.fa -s gtf \
+  --template-type genomic --kmer-source genome \
+  -k results/kmer/genokit.kmer.sqlite -x 100 -y 1000 \
+  -f csv -o results/genomic_primers.csv
+
+# cDNA: design from mature transcript sequences.
+GenoKit primer -d results/human.gtf.sqlite -g human.fa -s gtf \
+  --template-type cdna --kmer-source transcriptome \
+  -k results/kmer/genokit.kmer.sqlite \
+  -a 0.4 -b 0.6 -c 50 -e 70 -n 18 -m 25 -x 100 -y 1000 \
+  -f csv -o results/cdna_primers.csv
+```
+
+If `--kmer-source` is omitted, it is selected automatically from the template
+type, including when both sources coexist in one catalogue. An explicitly
+conflicting source is rejected before opening input files. `-k` is optional;
+without it, templates are still selected correctly and `Kmer Freq` is `NA`.
+When supplied, the catalogue must contain the matching biological source,
+canonical reverse-complement counts (build with `GenoKit kmer -r`), and exact
+primer-length k values. Candidates are restricted to available primer lengths
+and must occur in the selected reference. Raw legacy k-mer files lack source
+metadata; use a SQLite catalogue to validate their biological source.
+
+GC bounds (`-a/-b`) are fractions, Tm bounds (`-c/-e`) default to 50–70, primer
+lengths (`-n/-m`) to 18–25 nt, and product sizes (`-x/-y`) to 100–1000 bp.
+Product size includes both primers and any intervening introns in genomic
+mode. Genomic mode searches the full gene interval, and cDNA mode searches the
+full mature transcript for an internal amplicon. Add
+`-i GENE_ID` to select one gene and display its primer plot. `--print` writes
+CSV or FASTA to stdout instead of a file and cannot be combined with `-o`.
+
+CSV output adds `Template Type`; `Transcript ID` is empty for genomic templates.
+`Template Seq` replaces the former `Transcript Seq` column. `Start` and `End`
+are **0-based, half-open offsets into the oriented template**, not chromosome
+coordinates. `Source` identifies the forward or reverse primer; all primer
+sequences are written 5′→3′. `Fragment` reports the complete amplicon length.
+FASTA descriptions also identify the template type and template-relative
+positions.
+
+`--specificity-mode` and its `--seed-size` option have been removed. A seed-only
+k=12 dataset is no longer required by primer design. Template choice does not
+impose exon-junction targeting or perform mismatch-aware off-target alignment.
+
+### `sgrna`, `sirna`, and `shrna`
+
+Both `sirna` and `shrna` use `--target-mode {all,any}` (default: `all`).
+`all` requires each candidate to target every input transcript of the same gene;
+`any` requires at least one transcript, not a majority. The modes apply to both
+selected-gene (`-i`) and whole-database design. Outputs list actual hit transcript IDs.
+The old shRNA `--all` and `--common` CLI options have been removed. Replace `--all`
+with `--target-mode all`; `any` is broader than the former `--common` majority filter.
+
+Both commands accept `--region {cds,transcript}`, default `cds`. CDS mode joins
+annotated CDS segments and falls back to exons for transcripts without CDS;
+transcript mode joins exons including UTRs. Negative-strand sequences are reverse
+complemented. For shRNA, pass `--region transcript` to retain the previous
+full-transcript behavior. GTF stop_codon records are not separately appended
+in CDS mode, matching siRNA. Target mode is applied to the selected sequences.
+
+For siRNA, short or unscannable transcripts remain in the `all` coverage set.
+Ambiguous bases are not deleted: windows containing non-ATCG bases are skipped,
+so candidates cannot bridge artificial junctions and positions remain valid.
+Coverage is evaluated on the selected region (`--region cds` or `transcript`);
+noncoding transcripts continue to fall back to exons in CDS mode.
+
+```bash
+GenoKit sgrna --pam
+GenoKit sgrna -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -p NGG -l 20 -k results/kmer/genokit.kmer.sqlite \
+  -f csv -o results/sgrna.csv
+GenoKit sirna -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -l 21 --region cds --target-mode all --top 10 \
+  -k results/kmer/genokit.kmer.sqlite -f csv -o results/sirna.csv
+GenoKit shrna -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -l 21 -p CTCGAG --region cds --target-mode all -k results/kmer/genokit.kmer.sqlite \
+  -f csv -o results/shrna.csv
+```
+
+| Command | Main options | K-mer source |
+| --- | --- | --- |
+| `sgrna` | `-p/--pam_pattern` defaults to `NGG`; `-l` defaults to 20; `--pam` prints a reference table | genome |
+| `sirna` | `-l` is 19, 20, or 21 (default 21); `--region cds|transcript`; `--target-mode all|any`; optional `--top` per gene | transcriptome |
+| `shrna` | `-l` is 19, 20, or 21 (default 21); `-p/--loop` accepts an ATCG sequence or `standard`, `miR30`, `simple`; `--region cds|transcript`; `--target-mode all|any` | transcriptome |
+
+Add `-i GENE_ID` to limit design to one gene. K-mer catalogues are optional;
+when supplied, build the matching target length and biological source first.
+`--jellyfish PATH` overrides the executable used to query registered `.jf`
+files. K-mer frequency screening measures sequence occurrence; it is not a
+complete mismatch-aware off-target alignment analysis.
+
+### `barcode` and `motif`
+
+```bash
+GenoKit barcode -l 8 -n 20 -s dna -f csv -o results/barcodes.csv
+GenoKit barcode -l 10 -n 20 -s rna -f fasta -o results/barcodes.fa
+
+GenoKit motif -i sequences.fa -m CTACGAAAG -t dna -b -o results/motif.csv
+GenoKit motif -i sequences.fa -f patterns.txt -t dna -x 2 -o results/motifs.csv
+GenoKit motif -i sequences.fa -m 'CTACGAAAG|AAAAAA' -e -o results/regex.csv
+```
+
+For `barcode`, supply both `-l` and `-s dna|rna`; `-n` defaults to 20. The CLI
+uses GC bounds of 0.4–0.6 and a maximum homopolymer length of 2.
+
+For `motif`, provide `-m` for one pattern or `-f` for a pattern file (one pattern
+per line). `-b` searches both strands, `-c` enables case sensitivity, `-d` enables
+IUPAC degenerate bases, `-e` enables regular expressions, and `-x` sets the
+maximum mismatches (default 0). `-t` selects `dna` (default) or `rna`.
+
+## Visualization
+
+### `view`
+
+```bash
+GenoKit view -d results/human.gtf.sqlite -g human.fa -s gtf \
+  -i ENSG00000198062 -l 6 --orf-label-limit 20 -f pdf -o results/gene_view
+```
+
+Draws transcript structures with exon, CDS, UTR, and ORF features. `-o` is an
+output directory. Formats are `pdf` (default), `png`, and `tiff`.
+`--orf-label-limit 0` hides individual ORF numbers. Omitting `-i` processes all
+genes.
+
+### `circos`
+
+```bash
+GenoKit circos -a example/chromosome_length.csv \
+  -b example/barplot_data.csv -m example/heatmap_data.csv \
+  -k example/link_data.csv -f pdf -o results/circos.pdf
+```
+
+The `example/...` paths are resolved against the current directory first, then
+against the package's example directory. Track inputs are comma-separated files
+with a header row:
+
+| Option | Input columns |
+| --- | --- |
+| `-a/--chrom` | `chr,start,end` (last column supplies chromosome length) |
+| `-c/--cytoband` | chromosome, start, end, band name, stain |
+| `-b/--bar`, `-p/--point`, `-l/--line`, `-m/--heatmap` | `chr,start,end,value` |
+| `-k/--link` | `chr1,start1,end1,chr2,start2,end2` |
+
+`-t/--track` detects a line or link track from its header. Use an output filename
+with the desired extension; advertised formats are `pdf`, `png`, and `tiff`.
+
+### `ppi`
+
+```bash
+GenoKit ppi -i interactions.csv -s comma -l auto -o results/ppi
+```
+
+Input contains two protein identifiers per line, **without a header**. Set
+`-s comma` or `-s tab` explicitly. For example:
+
+```text
+TP53,MDM2
+TP53,ATM
+MDM2,RPL11
+```
+
+Layouts are `auto`, `fr`, `kk`, `forceatlas2`, `circle`, `star`, `tree`, `grid`,
+`shell`, `spectral`, `spiral`, and `random`. The output directory receives network
+and centrality PDFs, a centrality table, a GEXF network, and a log. The
+`ppi_centrality.csv` file is currently tab-separated despite its extension.
+
+### `hgvs`
+
+```bash
+# variants.txt contains one accession-qualified HGVS expression per line.
+GenoKit hgvs -i variants.txt -o results/hgvs
+
+# Use local reference data instead of downloading from NCBI.
+GenoKit hgvs -i variants.txt --genbank reference.gb -o results/hgvs_local
+```
+
+Use `-s/--string` for a single accession-qualified HGVS expression, or `-i` for
+an input file. The file reader also accepts the first column of CSV/TSV input
+and skips recognized `hgvs`, `variant`, or `variation` headers. Local GenBank or
+GenPept data must match the supplied accession and coordinate type.
+
+The parser accepts DNA coordinate types `g.`, `c.`, `n.`, `m.`, `o.`, RNA `r.`,
+and protein `p.`. `--variation` optionally validates the expected variant kind:
+`sub`, `del`, `ins`, `delins`, `dup`, `inv`, `rpt`, `alleles`, `ext`, or `fs`.
+Supported forms depend on the coordinate type; this is not a claim of complete
+HGVS grammar coverage.
+
+References are fetched from NCBI when no local reference is supplied and cached
+under `.genokit_cache/hgvs` by default (`--cache-dir` overrides this).
+`--email`/`NCBI_EMAIL` and `--api-key`/`NCBI_API_KEY` configure NCBI requests.
+Output can be PNG, PDF, or SVG; multiple inputs use an output directory or
+prefix. `--context` defaults to 20 and `--dpi` to 200. Diagnostic overrides are
+`--allow-reference-mismatch` and `--skip-three-prime-check`; inspect `-h` before
+using them.
+
+## Legacy GenBank entry point
+
+`setup.py` also installs **`GenoKitGB`**. It does not install an executable named
+`genBankExtract`; that name survives in legacy help text.
+
+The current `genokitgb.py` still imports old module paths such as
+`GenoKit.extract_CDS` and `GenoKit.extract_gene`, which do not exist in this
+source layout. Its feature-extraction commands therefore need code maintenance
+before use. Historical `genBankExtract` examples are not current working
+commands. The main `GenoKit hgvs --genbank` option is a separate implementation.
+
+## Project information
+
+- Source: [SitaoZ/GenoKit](https://github.com/SitaoZ/GenoKit)
+- Author: Sitao Zhu
+- Contact: zhusitao1990@163.com
+- License declared in package metadata: MIT
