@@ -1,4 +1,1 @@
-pyfaidx==0.6.0
-pyfastx==2.0.2
-pysam==0.16.0.1
-tqdm==4.64.0
+Sphinx>=8.2,<9
