@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Gene, genome and network visualization &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="HGVS variant-context visualization" href="hgvs.html" />
+    <link rel="prev" title="Motif searches and barcodes" href="motif_barcode.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="gene-genome-and-network-visualization">
+<h1>Gene, genome and network visualization<a class="headerlink" href="#gene-genome-and-network-visualization" title="Link to this heading">¶</a></h1>
+<section id="gene-structures">
+<h2>Gene structures<a class="headerlink" href="#gene-structures" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>view<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span>-s<span class="w"> </span>gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>GENE_ID<span class="w"> </span>-l<span class="w"> </span><span class="m">6</span><span class="w"> </span>--orf-label-limit<span class="w"> </span><span class="m">20</span><span class="w"> </span>-f<span class="w"> </span>pdf<span class="w"> </span>-o<span class="w"> </span>results/gene_view
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">-o</span></code> is a directory. Formats are PDF (default), PNG and TIFF. The plot shows
+transcript/exon structures, coding and untranslated regions, and candidate
+regulatory ORFs. <code class="docutils literal notranslate"><span class="pre">--orf-label-limit</span> <span class="pre">0</span></code> suppresses individual ORF numbers,
+not the underlying features. Omitting the gene selector processes all genes
+and can create many files; begin with a selected gene when checking inputs.</p>
+</section>
+<section id="circular-genome-plots">
+<h2>Circular genome plots<a class="headerlink" href="#circular-genome-plots" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>circos<span class="w"> </span>-a<span class="w"> </span>example/chromosome_length.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-b<span class="w"> </span>example/barplot_data.csv<span class="w"> </span>-m<span class="w"> </span>example/heatmap_data.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-k<span class="w"> </span>example/link_data.csv<span class="w"> </span>-f<span class="w"> </span>pdf<span class="w"> </span>-o<span class="w"> </span>results/circos.pdf
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">example/...</span></code> paths first resolve in the working directory, then in the
+package’s example directory. Inputs are comma-separated tables with a header.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Columns, in order</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-a/--chrom</span></code></p></td>
+<td><p>chr,start,end (end supplies chromosome length)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-c/--cytoband</span></code></p></td>
+<td><p>chromosome,start,end,band name,stain</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-b/--bar</span></code>, <code class="docutils literal notranslate"><span class="pre">-p/--point</span></code>, <code class="docutils literal notranslate"><span class="pre">-l/--line</span></code>, <code class="docutils literal notranslate"><span class="pre">-m/--heatmap</span></code></p></td>
+<td><p>chr,start,end,value</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-k/--link</span></code></p></td>
+<td><p>chr1,start1,end1,chr2,start2,end2</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">-t/--track</span></code> detects a line or link input from its header. Chromosome names in
+tracks must match the chromosome table. Supply a filename whose extension
+matches the desired format. This is a plotting workflow, not automatic
+whole-genome annotation summarization from a SQLite database.</p>
+</section>
+<section id="protein-interaction-networks">
+<h2>Protein interaction networks<a class="headerlink" href="#protein-interaction-networks" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>TP53,MDM2
+TP53,ATM
+MDM2,RPL11
+</pre></div>
+</div>
+<p>Save these pairs in <code class="docutils literal notranslate"><span class="pre">interactions.csv</span></code> <strong>without a header</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>ppi<span class="w"> </span>-i<span class="w"> </span>interactions.csv<span class="w"> </span>-s<span class="w"> </span>comma<span class="w"> </span>-l<span class="w"> </span>auto<span class="w"> </span>-o<span class="w"> </span>results/ppi
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">tab</span></code> for tab-separated edges. GenoKit uses supplied interactions;
+it does not automatically retrieve a STRING network for these IDs. Record the
+source and any filtering of the edge list separately.</p>
+<p>Layouts include auto, fr, kk, forceatlas2, circle, star, tree, grid, shell,
+spectral, spiral and random. Outputs include network and centrality PDFs,
+a centrality table, a GEXF network and a log. <code class="docutils literal notranslate"><span class="pre">ppi_centrality.csv</span></code> currently
+contains tab-separated values despite its extension. Layout coordinates can
+vary with algorithms and random initialization; retain exported results.</p>
+<p>On a headless server, use <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">MPLBACKEND=Agg</span></code> and a writable
+<code class="docutils literal notranslate"><span class="pre">MPLCONFIGDIR</span></code>. This does not affect the sequence coordinate conventions.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gene, genome and network visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gene-structures">Gene structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#circular-genome-plots">Circular genome plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#protein-interaction-networks">Protein interaction networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="motif_barcode.html" title="previous chapter">Motif searches and barcodes</a></li>
+      <li>Next: <a href="hgvs.html" title="next chapter">HGVS variant-context visualization</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/visualization.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

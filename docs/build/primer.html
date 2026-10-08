@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Primer design &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sgRNA, siRNA and shRNA design" href="rna_design.html" />
+    <link rel="prev" title="K-mer catalogues and portability" href="kmer.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="primer-design">
+<h1>Primer design<a class="headerlink" href="#primer-design" title="Link to this heading">¶</a></h1>
+<section id="select-the-actual-template">
+<h2>Select the actual template<a class="headerlink" href="#select-the-actual-template" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">--template-type</span></code></p></th>
+<th class="head"><p>Template</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">--kmer-source</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>genomic</p></td>
+<td><p>Continuous, strand-oriented gene interval including introns</p></td>
+<td><p>genome</p></td>
+</tr>
+<tr class="row-odd"><td><p>cdna (default)</p></td>
+<td><p>Each mature, exon-joined transcript of the gene</p></td>
+<td><p>transcriptome</p></td>
+</tr>
+</tbody>
+</table>
+<p>If omitted, the k-mer source is inferred from the template type. An explicitly
+conflicting source is rejected. Choosing cDNA does not require that a primer
+cross an exon junction, and does not guarantee absence of genomic amplification.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>primer<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span>-s<span class="w"> </span>gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>GENE_ID<span class="w"> </span>--template-type<span class="w"> </span>cdna<span class="w"> </span>--kmer-source<span class="w"> </span>transcriptome<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-k<span class="w"> </span>results/kmer/genokit.kmer.sqlite<span class="w"> </span>-n<span class="w"> </span><span class="m">18</span><span class="w"> </span>-m<span class="w"> </span><span class="m">25</span><span class="w"> </span>-x<span class="w"> </span><span class="m">100</span><span class="w"> </span>-y<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-f<span class="w"> </span>csv<span class="w"> </span>-o<span class="w"> </span>results/primer.csv
+GenoKit<span class="w"> </span>primer<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span>-s<span class="w"> </span>gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>GENE_ID<span class="w"> </span>--template-type<span class="w"> </span>genomic<span class="w"> </span>--kmer-source<span class="w"> </span>genome<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-k<span class="w"> </span>results/kmer/genokit.kmer.sqlite<span class="w"> </span>-f<span class="w"> </span>csv<span class="w"> </span>-o<span class="w"> </span>results/genomic_primer.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">-k</span></code> is optional. Without it, design still operates but catalogue frequencies
+and off-target counts are unavailable. Use <code class="docutils literal notranslate"><span class="pre">--print</span></code> instead of <code class="docutils literal notranslate"><span class="pre">-o</span></code> for
+stdout, never both. Selecting a gene also generates a primer plot in the working
+directory; the plot filename is based on the gene ID.</p>
+</section>
+<section id="candidate-search-and-ranking">
+<h2>Candidate search and ranking<a class="headerlink" href="#candidate-search-and-ranking" title="Link to this heading">¶</a></h2>
+<p>The CLI searches the full oriented template with sliding windows. It is not
+limited to transcript ends, and an internal amplicon can be found in a long
+transcript. The Python method’s optional <code class="docutils literal notranslate"><span class="pre">target_region</span></code> is not a CLI flag.</p>
+<p>The default CLI constraints are 18–25 nt primer length, GC fraction 0.4–0.6,
+Tm 50–70 degrees C, and product size 100–1000 bp. Tm uses the Wallace rule:</p>
+<div class="math notranslate nohighlight">
+\[T_m = 2(A+T) + 4(G+C).\]</div>
+<p>Non-ATCG windows and runs of three identical bases are rejected. A simple
+repeated-4-mer heuristic called <code class="docutils literal notranslate"><span class="pre">fast_hairpin</span></code> in the source rejects additional
+candidates; it is not a thermodynamic hairpin or primer-dimer calculation.
+When a catalogue is supplied, candidate lengths must have exact-k support and
+candidates must have a positive occurrence count.</p>
+<p>Pairs must have nonoverlapping, inward-facing sites and a product length within
+the requested range. The score is</p>
+<div class="math notranslate nohighlight">
+\[S = 2|T_{m,F}-T_{m,R}| + 0.1|GC_F-GC_R|,\]</div>
+<p>where GC is the rounded fraction used by the implementation. The lowest score
+wins. <strong>One pair per template</strong> is retained; ties do not replace the earlier
+pair. K-mer counts and coverage annotations are not terms in this score. A plot
+can therefore show an end-biased chosen pair even though internal candidates
+were searched. There is no CLI option to output every tied pair.</p>
+</section>
+<section id="coordinates-and-core-output-fields">
+<h2>Coordinates and core output fields<a class="headerlink" href="#coordinates-and-core-output-fields" title="Link to this heading">¶</a></h2>
+<p>CSV/FASTA <code class="docutils literal notranslate"><span class="pre">Start</span></code> and <code class="docutils literal notranslate"><span class="pre">End</span></code> are <strong>1-based inclusive template coordinates</strong>.
+The conversion from internal offsets occurs only at serialization. For both
+primer directions, <code class="docutils literal notranslate"><span class="pre">Length</span> <span class="pre">=</span> <span class="pre">End</span> <span class="pre">-</span> <span class="pre">Start</span> <span class="pre">+</span> <span class="pre">1</span></code>; sequences are written 5-prime
+to 3-prime. <code class="docutils literal notranslate"><span class="pre">Fragment</span></code> is the complete amplicon length including both primers
+and, in genomic mode, intervening introns. <code class="docutils literal notranslate"><span class="pre">Template</span> <span class="pre">Type</span></code> identifies the
+mode; genomic rows have no transcript ID. <code class="docutils literal notranslate"><span class="pre">Template</span> <span class="pre">Seq</span></code> is the full template,
+so CSV files can be large when many templates are reported.</p>
+</section>
+<section id="interpret-exact-match-specificity-fields">
+<h2>Interpret exact-match specificity fields<a class="headerlink" href="#interpret-exact-match-specificity-fields" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Kmer</span> <span class="pre">Freq</span></code>: total canonical occurrences in the selected reference.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Template</span> <span class="pre">Count</span></code>: the gene’s transcript templates in cDNA mode,
+or its single genomic interval in genomic mode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Templates</span> <span class="pre">Hit</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Coverage</span></code>: templates containing at
+least one exact occurrence in either orientation, and their fraction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Exact</span> <span class="pre">Matches</span></code>: all exact occurrences within the target templates,
+allowing more than one match per template.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Off-target</span> <span class="pre">Exact</span> <span class="pre">Matches</span></code>: catalogue frequency minus target exact matches,
+only when the source-aware canonical counting contract is available.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Pair</span> <span class="pre">Templates</span> <span class="pre">Hit</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span> <span class="pre">Pair</span> <span class="pre">Coverage</span></code>: templates in which
+the same pair has inward-facing, nonoverlapping matches satisfying product
+size limits; coverage is a fraction, not a percentage.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">Specificity</span> <span class="pre">Status</span></code> is <code class="docutils literal notranslate"><span class="pre">ok</span></code> for compatible subtraction, or explains an
+unavailable result: <code class="docutils literal notranslate"><span class="pre">no_database</span></code>, <code class="docutils literal notranslate"><span class="pre">unknown_counting</span></code>,
+<code class="docutils literal notranslate"><span class="pre">incompatible_counting</span></code>, <code class="docutils literal notranslate"><span class="pre">missing_frequency</span></code> or <code class="docutils literal notranslate"><span class="pre">count_mismatch</span></code>.
+<code class="docutils literal notranslate"><span class="pre">NA</span></code> is not zero. A count mismatch can indicate inconsistent references.
+Nonnegative subtraction alone does not prove that references are identical.</p>
+<p>An ideal transcriptome frequency need not equal the number of isoforms: a
+primer can be present only in a subset or occur repeatedly in one transcript.
+Use coverage and exact-match fields together. Pair coverage describes targets;
+it does not enumerate genome-wide off-target PCR products. Near matches and
+mismatch-tolerant amplification are outside this counting model.</p>
+</section>
+<section id="troubleshooting-no-candidates">
+<h2>Troubleshooting no candidates<a class="headerlink" href="#troubleshooting-no-candidates" title="Link to this heading">¶</a></h2>
+<p>Check exact-k availability, source type, canonical counting, template length,
+GC/Tm constraints and product limits. Repeated or ambiguous sequence can be
+filtered out. Reducing the minimum product length cannot fix a missing k value.
+<code class="docutils literal notranslate"><span class="pre">--specificity-mode</span></code> and <code class="docutils literal notranslate"><span class="pre">--seed-size</span></code> are retired options; no extra seed
+index is required by this workflow.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Primer design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#select-the-actual-template">Select the actual template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#candidate-search-and-ranking">Candidate search and ranking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coordinates-and-core-output-fields">Coordinates and core output fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpret-exact-match-specificity-fields">Interpret exact-match specificity fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-no-candidates">Troubleshooting no candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="kmer.html" title="previous chapter">K-mer catalogues and portability</a></li>
+      <li>Next: <a href="rna_design.html" title="next chapter">sgRNA, siRNA and shRNA design</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/primer.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

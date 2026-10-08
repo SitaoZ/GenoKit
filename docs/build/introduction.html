@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Introduction &#8212; GenoKit v1.0.0 documentation</title>
+    <title>Introduction &#8212; GenoKit 1.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=76e2d817"></script>
+    <script src="_static/documentation_options.js?v=8d563738"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="author" title="About these documents" href="about.html" />
@@ -35,15 +35,54 @@
             
   <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
-<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">GenoKit</span></code> is a python package for genome feature extraction in bioinformatics.
-The package contains two useful executable command programs. The first executable program
-is GenoKit including ten subroutines termed create, gene, promoter, UTR, uORF,CDS,
-dORF, exon, intron, intergenic. The create subroutine is used for creating database. The
-promoter subroutine is used for extracting promoter sequence. The uORF subroutine is used for
-extracting upstream open reading frames sequence. The UTR subroutine is used for extracting
-untranslated region sequence. The CDS subroutine is used for extracting coding sequence. The
-intergenic subroutine is used for extracting intergenic sequence between two genes. The second
-executable program is genBankExtract including four subroutines termed gene, CDS, rRNA, tRNA.</p>
+<section id="what-genokit-does">
+<h2>What GenoKit does<a class="headerlink" href="#what-genokit-does" title="Link to this heading">¶</a></h2>
+<p>GenoKit uses a reference annotation and its matching genome to support four
+connected groups of operations:</p>
+<ul class="simple">
+<li><p><strong>Database and utilities:</strong> <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">stat</span></code>, <code class="docutils literal notranslate"><span class="pre">fasta</span></code>, <code class="docutils literal notranslate"><span class="pre">iupac</span></code> and <code class="docutils literal notranslate"><span class="pre">kmer</span></code>.</p></li>
+<li><p><strong>Extraction:</strong> <code class="docutils literal notranslate"><span class="pre">gene</span></code>, <code class="docutils literal notranslate"><span class="pre">transcript</span></code>, <code class="docutils literal notranslate"><span class="pre">exon</span></code>, <code class="docutils literal notranslate"><span class="pre">intron</span></code>, <code class="docutils literal notranslate"><span class="pre">cds</span></code>, <code class="docutils literal notranslate"><span class="pre">utr</span></code>,
+<code class="docutils literal notranslate"><span class="pre">uorf</span></code>, <code class="docutils literal notranslate"><span class="pre">dorf</span></code>, <code class="docutils literal notranslate"><span class="pre">promoter</span></code>, <code class="docutils literal notranslate"><span class="pre">terminator</span></code> and <code class="docutils literal notranslate"><span class="pre">igr</span></code>.</p></li>
+<li><p><strong>Design and sequence searches:</strong> <code class="docutils literal notranslate"><span class="pre">primer</span></code>, <code class="docutils literal notranslate"><span class="pre">sgrna</span></code>, <code class="docutils literal notranslate"><span class="pre">sirna</span></code>, <code class="docutils literal notranslate"><span class="pre">shrna</span></code>,
+<code class="docutils literal notranslate"><span class="pre">barcode</span></code> and <code class="docutils literal notranslate"><span class="pre">motif</span></code>.</p></li>
+<li><p><strong>Visualization:</strong> <code class="docutils literal notranslate"><span class="pre">view</span></code>, <code class="docutils literal notranslate"><span class="pre">circos</span></code>, <code class="docutils literal notranslate"><span class="pre">ppi</span></code> and <code class="docutils literal notranslate"><span class="pre">hgvs</span></code>.</p></li>
+</ul>
+<p>There are eleven extraction commands; <code class="docutils literal notranslate"><span class="pre">utr</span></code> covers both untranslated ends.
+<code class="docutils literal notranslate"><span class="pre">gene</span></code> returns the genomic interval, whereas <code class="docutils literal notranslate"><span class="pre">transcript</span></code> reconstructs a
+spliced sequence. These are different biological products, not alternative
+names for the same extraction.</p>
+</section>
+<section id="how-the-components-connect">
+<h2>How the components connect<a class="headerlink" href="#how-the-components-connect" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GTF/GFF3 -- create --&gt; annotation SQLite database
+FASTA -------------&gt; indexed sequence access
+                           |
+              extraction / design / gene view
+                           |
+              FASTA, CSV, feature tables, figures
+</pre></div>
+</div>
+<p>The default annotation database is a GenoKit SQLite schema with lazy access to
+models. It is not a gffutils FeatureDB or an R TxDb, even though those formats
+also use SQLite. Large reference sequences are accessed through an indexed
+FASTA reader instead of being concatenated into one in-memory genome string.
+Individual commands can still retain substantial candidate/model data.</p>
+<p>K-mer catalogues are separate databases used by optional design screening.
+Motif searches operate on sequence files; barcodes are generated independently
+of an annotation. Circos and PPI use supplied track/edge tables. HGVS uses
+accession-specific sequence records rather than the annotation database.</p>
+</section>
+<section id="scope-of-predictions">
+<h2>Scope of predictions<a class="headerlink" href="#scope-of-predictions" title="Link to this heading">¶</a></h2>
+<p>Design commands generate sequence-based <strong>candidates</strong>. K-mer occurrence counts
+are not mismatch-aware alignment searches, and the current primer Tm estimate
+is not a salt- and concentration-adjusted thermodynamic model. ORF detection
+reports sequence-defined candidates, not evidence of translation. Match the
+reference, annotation release and biological target before interpreting results.</p>
+<p>A browser interface is available at <a class="reference external" href="http://www.genokit.cn/">GenoKit Web</a>.
+The instructions here describe the local CLI; web deployments can offer a
+subset of commands and different limits.</p>
+</section>
 </section>
 
 
@@ -57,19 +96,47 @@ executable program is genBankExtract including four subroutines termed gene, CDS
 
 
 
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
 
 
 
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-genokit-does">What GenoKit does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-the-components-connect">How the components connect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scope-of-predictions">Scope of predictions</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
 </ul>
 
 <div class="relations">

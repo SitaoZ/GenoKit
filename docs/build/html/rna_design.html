@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>sgRNA, siRNA and shRNA design &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Motif searches and barcodes" href="motif_barcode.html" />
+    <link rel="prev" title="Primer design" href="primer.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="sgrna-sirna-and-shrna-design">
+<h1>sgRNA, siRNA and shRNA design<a class="headerlink" href="#sgrna-sirna-and-shrna-design" title="Link to this heading">¶</a></h1>
+<section id="sgrna-candidates">
+<h2>sgRNA candidates<a class="headerlink" href="#sgrna-candidates" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>sgrna<span class="w"> </span>--pam
+GenoKit<span class="w"> </span>sgrna<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span>-s<span class="w"> </span>gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>GENE_ID<span class="w"> </span>-p<span class="w"> </span>NGG<span class="w"> </span>-l<span class="w"> </span><span class="m">20</span><span class="w"> </span>-k<span class="w"> </span>results/kmer/genokit.kmer.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-f<span class="w"> </span>csv<span class="w"> </span>-o<span class="w"> </span>results/sgrna.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--pam</span></code> displays a PAM reference table. <code class="docutils literal notranslate"><span class="pre">-p</span></code> selects the PAM pattern
+(default NGG); <code class="docutils literal notranslate"><span class="pre">-l</span></code> selects guide length (default 20). Candidate scanning
+considers strand orientation. Use genome k-mer counts of the guide length for
+optional occurrence screening. This is not a genome-wide mismatch-aware
+alignment search or experimental efficiency validation.</p>
+</section>
+<section id="select-an-rna-target-region">
+<h2>Select an RNA target region<a class="headerlink" href="#select-an-rna-target-region" title="Link to this heading">¶</a></h2>
+<p>Both siRNA and shRNA support <code class="docutils literal notranslate"><span class="pre">--region</span> <span class="pre">cds|transcript</span></code> (default <code class="docutils literal notranslate"><span class="pre">cds</span></code>).
+CDS mode joins annotated CDS segments; a transcript without CDS falls back to
+its exons. Transcript mode joins all exons, including UTRs. These RNA-design
+CDS sequences do not separately append GTF stop-codon records.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--target-mode</span> <span class="pre">all</span></code> (default) requires each retained target sequence to occur
+in every input transcript region of the gene. <code class="docutils literal notranslate"><span class="pre">any</span></code> requires at least one,
+not a majority. Output lists actual hit transcripts. Constraints apply per gene
+both with and without <code class="docutils literal notranslate"><span class="pre">-i</span></code>. For siRNA, a short/unscannable transcript remains
+in the all-mode coverage set; ambiguous windows are skipped rather than bases
+being deleted and artificial junctions introduced.</p>
+</section>
+<section id="sirna">
+<h2>siRNA<a class="headerlink" href="#sirna" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>sirna<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span>-s<span class="w"> </span>gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>GENE_ID<span class="w"> </span>-l<span class="w"> </span><span class="m">21</span><span class="w"> </span>--region<span class="w"> </span>transcript<span class="w"> </span>--target-mode<span class="w"> </span>all<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-k<span class="w"> </span>results/kmer/genokit.kmer.sqlite<span class="w"> </span>-f<span class="w"> </span>csv<span class="w"> </span>-o<span class="w"> </span>results/sirna.csv
+</pre></div>
+</div>
+<p>Allowed target lengths are 19, 20 and 21 nt, default 21. <code class="docutils literal notranslate"><span class="pre">--top</span></code> limits reported
+candidates per gene. Optional k-mer counts should come from the transcriptome
+and match the target length. Candidate scores are implementation-defined
+sequence heuristics, not measured knockdown efficiencies.</p>
+</section>
+<section id="shrna">
+<h2>shRNA<a class="headerlink" href="#shrna" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>shrna<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span>-s<span class="w"> </span>gtf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>GENE_ID<span class="w"> </span>-l<span class="w"> </span><span class="m">21</span><span class="w"> </span>--region<span class="w"> </span>cds<span class="w"> </span>--target-mode<span class="w"> </span>any<span class="w"> </span>-p<span class="w"> </span>CTCGAG<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-k<span class="w"> </span>results/kmer/genokit.kmer.sqlite<span class="w"> </span>-f<span class="w"> </span>csv<span class="w"> </span>-o<span class="w"> </span>results/shrna.csv
+</pre></div>
+</div>
+<p>The length choices and target-mode interface match siRNA. <code class="docutils literal notranslate"><span class="pre">-p/--loop</span></code> is a
+loop/linker sequence (default CTCGAG), not a PAM or thread count. Named loop
+presets include <code class="docutils literal notranslate"><span class="pre">standard</span></code>, <code class="docutils literal notranslate"><span class="pre">miR30</span></code> and <code class="docutils literal notranslate"><span class="pre">simple</span></code>; custom ATCG strings are
+accepted. Output includes the selected target, loop, and sense/antisense
+oligonucleotide constructs. Inspect the reported construct before ordering.</p>
+<p>All three commands accept <code class="docutils literal notranslate"><span class="pre">--jellyfish</span> <span class="pre">PATH</span></code> when querying .jf datasets.
+K-mer databases are optional. To compare all versus any, keep the annotation,
+region, candidate length and other settings identical.</p>
+<p>For old shRNA workflows, <code class="docutils literal notranslate"><span class="pre">--region</span> <span class="pre">transcript</span></code> retains full-transcript target
+selection. Replace retired <code class="docutils literal notranslate"><span class="pre">--all</span></code>/<code class="docutils literal notranslate"><span class="pre">--common</span></code> flags with the explicit
+<code class="docutils literal notranslate"><span class="pre">--target-mode</span></code> interface; <code class="docutils literal notranslate"><span class="pre">any</span></code> is broader than the old majority rule.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">sgRNA, siRNA and shRNA design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sgrna-candidates">sgRNA candidates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#select-an-rna-target-region">Select an RNA target region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sirna">siRNA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shrna">shRNA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="primer.html" title="previous chapter">Primer design</a></li>
+      <li>Next: <a href="motif_barcode.html" title="next chapter">Motif searches and barcodes</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/rna_design.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

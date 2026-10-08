@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>GenoKit documentation &#8212; GenoKit v1.0.0 documentation</title>
+    <title>GenoKit documentation &#8212; GenoKit 1.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=76e2d817"></script>
+    <script src="_static/documentation_options.js?v=8d563738"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="author" title="About these documents" href="about.html" />
@@ -34,29 +34,181 @@
             
   <section id="genokit-documentation">
 <h1>GenoKit documentation<a class="headerlink" href="#genokit-documentation" title="Link to this heading">¶</a></h1>
-<p>Add your content using <code class="docutils literal notranslate"><span class="pre">reStructuredText</span></code> syntax. See the
-<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html">reStructuredText</a>
-documentation for details.</p>
+<p>GenoKit is an open-source Python command-line toolkit connecting genome
+annotations with sequence extraction, oligonucleotide design and visualization.
+These pages describe the <strong>1.0.0 source implementation</strong>. A published package
+may expose different options; check <code class="docutils literal notranslate"><span class="pre">GenoKit</span> <span class="pre">--version</span></code> and command help.</p>
+<p>Start with <a class="reference internal" href="install.html"><span class="doc">Installation</span></a> and <a class="reference internal" href="tutorial.html"><span class="doc">Tutorial: annotation to sequence</span></a>. The <a class="reference internal" href="example.html"><span class="doc">Worked example with a small genome</span></a> page includes
+a small downloadable genome and annotation that can be used without human data.
+For a complete list of flags and defaults, see <a class="reference internal" href="command_reference.html"><span class="doc">Command reference</span></a>.</p>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#what-genokit-does">What GenoKit does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#how-the-components-connect">How the components connect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#scope-of-predictions">Scope of predictions</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#git">git</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#pip">pip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#optional-requirements">Optional requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#choose-an-isolated-python-environment">Choose an isolated Python environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#install-the-current-source">Install the current source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#declared-python-dependencies">Declared Python dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#optional-external-tools">Optional external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#check-the-installation">Check the installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#quick-start">Quick-start</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#main-functional-commands">Main functional commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prepare-matching-inputs">Prepare matching inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#extract-sequences">Extract sequences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#select-one-record">Select one record</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#continue-to-analysis-and-design">Continue to analysis and design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="example.html#step1-build-database">Step1: build database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#download-the-inputs">Download the inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#build-and-extract">Build and extract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#explore-the-remaining-features">Explore the remaining features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#a-small-k-mer-catalogue">A small k-mer catalogue</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inputs_outputs.html#annotation-and-fasta">Annotation and FASTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs_outputs.html#output-selection">Output selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs_outputs.html#coordinate-systems">Coordinate systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs_outputs.html#splicing-and-strand">Splicing and strand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inputs_outputs.html#identifiers-and-empty-results">Identifiers and empty results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database.html#create-and-reuse-a-database">Create and reuse a database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#legacy-backend">Legacy backend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#index-handling">Index handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#statistics-and-record-selection">Statistics and record selection</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extraction.html#choose-a-biological-product">Choose a biological product</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extraction.html#core-examples">Core examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extraction.html#cds-reconstruction">CDS reconstruction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extraction.html#promoter-and-terminator-boundaries">Promoter and terminator boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extraction.html#intergenic-regions">Intergenic regions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regulatory_orfs.html#search-model">Search model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regulatory_orfs.html#run-extraction">Run extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regulatory_orfs.html#coordinates-and-figures">Coordinates and figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regulatory_orfs.html#why-a-transcript-has-no-orf-result">Why a transcript has no ORF result</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kmer.html#separate-the-biological-sources">Separate the biological sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kmer.html#build-exact-lengths-required-by-design">Build exact lengths required by design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kmer.html#engines">Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kmer.html#register-an-existing-dataset">Register an existing dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kmer.html#move-between-platforms">Move between platforms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="primer.html#select-the-actual-template">Select the actual template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="primer.html#candidate-search-and-ranking">Candidate search and ranking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="primer.html#coordinates-and-core-output-fields">Coordinates and core output fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="primer.html#interpret-exact-match-specificity-fields">Interpret exact-match specificity fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="primer.html#troubleshooting-no-candidates">Troubleshooting no candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rna_design.html#sgrna-candidates">sgRNA candidates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rna_design.html#select-an-rna-target-region">Select an RNA target region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rna_design.html#sirna">siRNA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rna_design.html#shrna">shRNA</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="motif_barcode.html#search-known-patterns">Search known patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="motif_barcode.html#generate-barcode-candidates">Generate barcode candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html#gene-structures">Gene structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html#circular-genome-plots">Circular genome plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html#protein-interaction-networks">Protein interaction networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hgvs.html#inputs-and-reference-records">Inputs and reference records</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hgvs.html#supported-contexts">Supported contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hgvs.html#reference-validation">Reference validation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-create">GenoKit create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-fasta">GenoKit fasta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-stat">GenoKit stat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-kmer">GenoKit kmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-iupac">GenoKit iupac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-gene">GenoKit gene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-transcript">GenoKit transcript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-igr">GenoKit igr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-promoter">GenoKit promoter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-sirna">GenoKit sirna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-sgrna">GenoKit sgrna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-primer">GenoKit primer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-motif">GenoKit motif</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-ppi">GenoKit ppi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-view">GenoKit view</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-circos">GenoKit circos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-terminator">GenoKit terminator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-utr">GenoKit utr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-uorf">GenoKit uorf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-cds">GenoKit cds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-dorf">GenoKit dorf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-exon">GenoKit exon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-intron">GenoKit intron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-barcode">GenoKit barcode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-shrna">GenoKit shrna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command_reference.html#genokit-hgvs">GenoKit hgvs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reproducibility.html#record-the-inputs-and-environment">Record the inputs and environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducibility.html#design-references">Design references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reproducibility.html#measure-equivalent-tasks">Measure equivalent tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-are-old-commands-rejected">Why are old commands rejected?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-does-an-id-not-exist">Why does an ID not exist?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-is-fasta-indexing-failing">Why is FASTA indexing failing?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-is-an-sqlite-database-rejected">Why is an SQLite database rejected?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-are-no-primers-or-rna-targets-produced">Why are no primers or RNA targets produced?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-do-primers-appear-near-transcript-ends">Why do primers appear near transcript ends?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-are-off-target-counts-na">Why are off-target counts NA?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-are-outputs-shorter-or-different-from-another-tool">Why are outputs shorter or different from another tool?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-is-a-figure-log-in-the-working-directory">Why is a figure/log in the working directory?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#can-i-use-genokitgb">Can I use GenoKitGB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-should-an-issue-report-include">What should an issue report include?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#local-html-build">Local HTML build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#regenerate-the-command-reference">Regenerate the command reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#read-the-docs-configuration">Read the Docs configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
 </ul>
 </div>
 </section>
@@ -72,19 +224,42 @@ documentation for details.</p>
 
 
 
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
 
 
 
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
 </ul>
 
 <div class="relations">

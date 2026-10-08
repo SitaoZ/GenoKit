@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Motif searches and barcodes &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gene, genome and network visualization" href="visualization.html" />
+    <link rel="prev" title="sgRNA, siRNA and shRNA design" href="rna_design.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="motif-searches-and-barcodes">
+<h1>Motif searches and barcodes<a class="headerlink" href="#motif-searches-and-barcodes" title="Link to this heading">¶</a></h1>
+<section id="search-known-patterns">
+<h2>Search known patterns<a class="headerlink" href="#search-known-patterns" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>motif<span class="w"> </span>-i<span class="w"> </span>sequences.fa<span class="w"> </span>-m<span class="w"> </span>ATG<span class="w"> </span>-t<span class="w"> </span>dna<span class="w"> </span>-o<span class="w"> </span>results/atg.csv
+GenoKit<span class="w"> </span>motif<span class="w"> </span>-i<span class="w"> </span>sequences.fa<span class="w"> </span>-m<span class="w"> </span>ATNG<span class="w"> </span>-d<span class="w"> </span>-b<span class="w"> </span>-t<span class="w"> </span>dna<span class="w"> </span>-o<span class="w"> </span>results/degenerate.csv
+GenoKit<span class="w"> </span>motif<span class="w"> </span>-i<span class="w"> </span>sequences.fa<span class="w"> </span>-f<span class="w"> </span>patterns.txt<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span><span class="w"> </span>-o<span class="w"> </span>results/patterns.csv
+GenoKit<span class="w"> </span>motif<span class="w"> </span>-i<span class="w"> </span>sequences.fa<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;ATG[ACGT]{3}TAA&#39;</span><span class="w"> </span>-e<span class="w"> </span>-o<span class="w"> </span>results/regex.csv
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">-m</span></code> for one pattern or <code class="docutils literal notranslate"><span class="pre">-f</span></code> for a text file containing one pattern per
+line. <code class="docutils literal notranslate"><span class="pre">-b</span></code> searches both strands, <code class="docutils literal notranslate"><span class="pre">-c</span></code> requests case-sensitive matching,
+<code class="docutils literal notranslate"><span class="pre">-d</span></code> enables IUPAC ambiguity codes, <code class="docutils literal notranslate"><span class="pre">-e</span></code> enables regular expressions, and
+<code class="docutils literal notranslate"><span class="pre">-x</span></code> sets the allowed mismatch count (default 0). <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">rna</span></code> selects RNA mode.
+Use a single matching mode deliberately; do not assume regular expressions and
+mismatch matching have identical semantics. Quote expressions to prevent shell
+expansion. This is supplied-pattern search, not de novo motif discovery or a
+PWM database-scanning interface.</p>
+</section>
+<section id="generate-barcode-candidates">
+<h2>Generate barcode candidates<a class="headerlink" href="#generate-barcode-candidates" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>barcode<span class="w"> </span>-l<span class="w"> </span><span class="m">8</span><span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>-s<span class="w"> </span>dna<span class="w"> </span>-f<span class="w"> </span>csv<span class="w"> </span>-o<span class="w"> </span>results/barcodes.csv
+GenoKit<span class="w"> </span>barcode<span class="w"> </span>-l<span class="w"> </span><span class="m">10</span><span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>-s<span class="w"> </span>rna<span class="w"> </span>-f<span class="w"> </span>fasta<span class="w"> </span>-o<span class="w"> </span>results/rna_barcodes.fa
+</pre></div>
+</div>
+<p>Supply <code class="docutils literal notranslate"><span class="pre">-l</span></code> and <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">dna|rna</span></code> explicitly; count defaults to 20. The CLI uses
+GC bounds 0.4–0.6 and maximum homopolymer length 2. Randomly generated accepted
+barcodes are unique within the generated list. The generator limits attempts,
+so demanding requests can yield fewer records than requested.</p>
+<p>The CLI does not expose all methods of the underlying BarcodeDesigner class,
+such as every paired-index or distance-selection helper. Do not assume that a
+random barcode set guarantees a specified pairwise Hamming distance. The CLI
+has no seed flag; retain the actual output when reproducible barcode identities
+are required.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Motif searches and barcodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#search-known-patterns">Search known patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generate-barcode-candidates">Generate barcode candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="rna_design.html" title="previous chapter">sgRNA, siRNA and shRNA design</a></li>
+      <li>Next: <a href="visualization.html" title="next chapter">Gene, genome and network visualization</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/motif_barcode.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

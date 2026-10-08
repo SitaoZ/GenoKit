@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>K-mer catalogues and portability &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Primer design" href="primer.html" />
+    <link rel="prev" title="Upstream and downstream ORFs" href="regulatory_orfs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="k-mer-catalogues-and-portability">
+<h1>K-mer catalogues and portability<a class="headerlink" href="#k-mer-catalogues-and-portability" title="Link to this heading">¶</a></h1>
+<section id="separate-the-biological-sources">
+<h2>Separate the biological sources<a class="headerlink" href="#separate-the-biological-sources" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">genome</span></code> counts reference genomic sequence. <code class="docutils literal notranslate"><span class="pre">transcriptome</span></code> counts spliced
+transcript sequences and can count the same shared sequence in several isoforms.
+Use genome counts for genomic primers and sgRNAs; use transcriptome counts for
+cDNA primers, siRNAs and shRNAs. The annotation SQLite and k-mer SQLite are
+separate files even when both have a <code class="docutils literal notranslate"><span class="pre">.sqlite</span></code> extension.</p>
+</section>
+<section id="build-exact-lengths-required-by-design">
+<h2>Build exact lengths required by design<a class="headerlink" href="#build-exact-lengths-required-by-design" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>kmer<span class="w"> </span>-f<span class="w"> </span>human.fa<span class="w"> </span>--source-type<span class="w"> </span>genome<span class="w"> </span>--lengths<span class="w"> </span><span class="m">18</span>-25<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>results/kmer<span class="w"> </span>-r<span class="w"> </span>--engine<span class="w"> </span>jellyfish<span class="w"> </span>-j<span class="w"> </span>jellyfish<span class="w"> </span>-t<span class="w"> </span><span class="m">4</span>
+GenoKit<span class="w"> </span>kmer<span class="w"> </span>--source-type<span class="w"> </span>transcriptome<span class="w"> </span>-d<span class="w"> </span>results/human.gtf.sqlite<span class="w"> </span>-g<span class="w"> </span>human.fa<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--lengths<span class="w"> </span><span class="m">18</span>-25<span class="w"> </span>-o<span class="w"> </span>results/kmer<span class="w"> </span>-r<span class="w"> </span>--engine<span class="w"> </span>jellyfish<span class="w"> </span>-j<span class="w"> </span>jellyfish<span class="w"> </span>-t<span class="w"> </span><span class="m">4</span>
+</pre></div>
+</div>
+<p>One <code class="docutils literal notranslate"><span class="pre">results/kmer/genokit.kmer.sqlite</span></code> catalogue can register multiple sources
+and k values. <code class="docutils literal notranslate"><span class="pre">--lengths</span></code> accepts ranges and comma-separated values, whereas
+<code class="docutils literal notranslate"><span class="pre">-l</span></code> specifies one length (default 18). <code class="docutils literal notranslate"><span class="pre">-r</span></code> enables canonical reverse-
+complement counting, required by the primer catalogue workflow.</p>
+<p>For a prebuilt mature-transcript FASTA, use <code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">transcripts.fa</span></code> with
+<code class="docutils literal notranslate"><span class="pre">--source-type</span> <span class="pre">transcriptome</span></code> instead of <code class="docutils literal notranslate"><span class="pre">-d</span></code>/<code class="docutils literal notranslate"><span class="pre">-g</span></code>. Using genomic sequence
+with a transcriptome label does not make it a transcriptome reference.</p>
+</section>
+<section id="engines">
+<h2>Engines<a class="headerlink" href="#engines" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">--engine</span> <span class="pre">auto</span></code> selects an available implementation; explicit choices are
+<code class="docutils literal notranslate"><span class="pre">jellyfish</span></code> and <code class="docutils literal notranslate"><span class="pre">python</span></code>. The Python implementation is limited to small
+inputs up to 250 MiB and k values 1–31. It is useful for demonstrations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>kmer<span class="w"> </span>-f<span class="w"> </span>small.fa<span class="w"> </span>--source-type<span class="w"> </span>genome<span class="w"> </span>-l<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>results/small_kmer<span class="w"> </span>-r<span class="w"> </span>--engine<span class="w"> </span>python
+</pre></div>
+</div>
+<p>Use Jellyfish for large human inputs. Multiple k values increase preparation
+time and disk usage. A catalogue may contain counts internally or refer to
+external <code class="docutils literal notranslate"><span class="pre">.jf</span></code> payloads; moving only the SQLite file is not always sufficient.</p>
+</section>
+<section id="register-an-existing-dataset">
+<h2>Register an existing dataset<a class="headerlink" href="#register-an-existing-dataset" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>kmer<span class="w"> </span>--register-jf<span class="w"> </span>human.fa.kmer.20.jf<span class="w"> </span>--source-type<span class="w"> </span>genome<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>results/kmer<span class="w"> </span>-r<span class="w"> </span>-j<span class="w"> </span>/path/to/jellyfish
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--register-jf</span></code> can be repeated. Registration records existing counts without
+recounting the reference. <code class="docutils literal notranslate"><span class="pre">--sqlite-db</span></code> selects a catalogue path explicitly.
+Register a source and canonical mode consistent with how the dataset was built;
+registration is not a conversion of the underlying counts.</p>
+</section>
+<section id="move-between-platforms">
+<h2>Move between platforms<a class="headerlink" href="#move-between-platforms" title="Link to this heading">¶</a></h2>
+<p>Copy the catalogue and its referenced datasets, install Jellyfish for the new
+platform, and register each moved dataset using its new path and executable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>kmer<span class="w"> </span>--register-jf<span class="w"> </span>/data/kmer/human.fa.kmer.20.jf<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--source-type<span class="w"> </span>genome<span class="w"> </span>--sqlite-db<span class="w"> </span>/data/kmer/genokit.kmer.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>/data/kmer<span class="w"> </span>-r<span class="w"> </span>-j<span class="w"> </span>/opt/bio/bin/jellyfish
+</pre></div>
+</div>
+<p>Use the same source/k combination to update its registration. Re-register all
+moved sources/lengths that will be queried. A design command’s <code class="docutils literal notranslate"><span class="pre">--jellyfish</span></code>
+can override the stored executable path, but cannot repair a missing dataset.
+Retain reference and annotation checksums alongside the catalogue: metadata
+about source type alone cannot establish that the assembly/release matches.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">K-mer catalogues and portability</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#separate-the-biological-sources">Separate the biological sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-exact-lengths-required-by-design">Build exact lengths required by design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#engines">Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#register-an-existing-dataset">Register an existing dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#move-between-platforms">Move between platforms</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="regulatory_orfs.html" title="previous chapter">Upstream and downstream ORFs</a></li>
+      <li>Next: <a href="primer.html" title="next chapter">Primer design</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/kmer.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

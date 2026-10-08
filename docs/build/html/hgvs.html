@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>HGVS variant-context visualization &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Command reference" href="command_reference.html" />
+    <link rel="prev" title="Gene, genome and network visualization" href="visualization.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="hgvs-variant-context-visualization">
+<h1>HGVS variant-context visualization<a class="headerlink" href="#hgvs-variant-context-visualization" title="Link to this heading">¶</a></h1>
+<section id="inputs-and-reference-records">
+<h2>Inputs and reference records<a class="headerlink" href="#inputs-and-reference-records" title="Link to this heading">¶</a></h2>
+<p>Use an accession-qualified HGVS expression with <code class="docutils literal notranslate"><span class="pre">-s/--string</span></code> or a file with
+<code class="docutils literal notranslate"><span class="pre">-i</span></code>. A file can contain one expression per line; CSV/TSV readers also accept
+the first column and recognized hgvs/variant/variation headers.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>GenoKit<span class="w"> </span>hgvs<span class="w"> </span>-i<span class="w"> </span>variants.txt<span class="w"> </span>-o<span class="w"> </span>results/hgvs
+GenoKit<span class="w"> </span>hgvs<span class="w"> </span>-i<span class="w"> </span>variants.txt<span class="w"> </span>--genbank<span class="w"> </span>reference.gb<span class="w"> </span>-o<span class="w"> </span>results/hgvs_local
+</pre></div>
+</div>
+<p>The reference must match the accession, its version and the coordinate type.
+A local GenBank/GenPept record avoids a reference download. Otherwise records
+are retrieved from NCBI and cached in <code class="docutils literal notranslate"><span class="pre">.genokit_cache/hgvs</span></code>; use <code class="docutils literal notranslate"><span class="pre">--cache-dir</span></code>
+to choose another location. Configure requests with <code class="docutils literal notranslate"><span class="pre">--email</span></code>/<code class="docutils literal notranslate"><span class="pre">NCBI_EMAIL</span></code>
+and, if available, <code class="docutils literal notranslate"><span class="pre">--api-key</span></code>/<code class="docutils literal notranslate"><span class="pre">NCBI_API_KEY</span></code>. Do not publish API keys in
+example scripts or archived logs.</p>
+</section>
+<section id="supported-contexts">
+<h2>Supported contexts<a class="headerlink" href="#supported-contexts" title="Link to this heading">¶</a></h2>
+<p>The parser recognizes DNA coordinate types g., c., n., m., o., RNA r. and
+protein p. The available forms depend on coordinate type; this does not imply
+complete HGVS grammar coverage. <code class="docutils literal notranslate"><span class="pre">--variation</span></code> can validate an expected kind:
+sub, del, ins, delins, dup, inv, rpt, alleles, ext or fs.</p>
+<p>Output supports PNG, PDF and SVG. For multiple inputs, use an output directory
+or prefix. <code class="docutils literal notranslate"><span class="pre">--context</span></code> defaults to 20 and <code class="docutils literal notranslate"><span class="pre">--dpi</span></code> to 200. Local sequence,
+codon and amino-acid context depend on the reference record and variant type.</p>
+</section>
+<section id="reference-validation">
+<h2>Reference validation<a class="headerlink" href="#reference-validation" title="Link to this heading">¶</a></h2>
+<p>A mismatch can indicate the wrong accession version, coordinate type or
+reference allele. Fix those inputs first. <code class="docutils literal notranslate"><span class="pre">--allow-reference-mismatch</span></code> and
+<code class="docutils literal notranslate"><span class="pre">--skip-three-prime-check</span></code> are diagnostic overrides; record their use and
+do not interpret an overridden check as successful reference validation.
+This visualization command is separate from the legacy GenoKitGB entry point.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HGVS variant-context visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inputs-and-reference-records">Inputs and reference records</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supported-contexts">Supported contexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-validation">Reference validation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="visualization.html" title="previous chapter">Gene, genome and network visualization</a></li>
+      <li>Next: <a href="command_reference.html" title="next chapter">Command reference</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/hgvs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
