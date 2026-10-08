@@ -1,6 +1,7 @@
-sphinx-quickstart docs
-sphinx-apidoc -o docs/source/GenoKit GenoKit
-sphinx-build -b html docs/source/ docs/build/html
-cd docs
-sphinx-build -b html source/ build/
-make html
+#!/usr/bin/env bash
+# Run from any directory. Optional argument: an alternate HTML output directory.
+set -euo pipefail
+repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+python_cmd="${PYTHON:-python}"
+output_dir="${1:-$repo_dir/docs/build/html}"
+"$python_cmd" -m sphinx -b html -W --keep-going "$repo_dir/docs/source" "$output_dir"
