@@ -5,16 +5,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>About &#8212; GenoKit v1.0.0 documentation</title>
+    <title>About GenoKit &#8212; GenoKit 1.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
-    <script src="_static/documentation_options.js?v=76e2d817"></script>
+    <script src="_static/documentation_options.js?v=8d563738"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="author" title="About these documents" href="#" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Example" href="example.html" />
+    <link rel="prev" title="Build and maintain the documentation" href="documentation.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -32,9 +32,24 @@
 
           <div class="body" role="main">
             
-  <section id="about">
-<h1>About<a class="headerlink" href="#about" title="Link to this heading">¶</a></h1>
-<p>Hello, I’m <a class="reference external" href="https://github.com/SitaoZ">zhusitao</a>, I’m a postdoctoral researcher at Wuhan University, and a bioinformatician with 10 years of experience in computational biology, intergration algorithms, and genomic datasets. I currently focus on multi-omics integration, cholesterol metabolism and translational control in mice and humans.</p>
+  <section id="about-genokit">
+<h1>About GenoKit<a class="headerlink" href="#about-genokit" title="Link to this heading">¶</a></h1>
+<p>GenoKit is developed by Sitao Zhu. The current package metadata declares the
+MIT license and version 1.0.0. These pages document the source implementation
+reviewed on 8 October 2026, rather than every historical release.</p>
+<ul class="simple">
+<li><p>Source and issue tracker: <a class="reference external" href="https://github.com/SitaoZ/GenoKit">https://github.com/SitaoZ/GenoKit</a></p></li>
+<li><p>Python distribution: <a class="reference external" href="https://pypi.org/project/GenoKit/">https://pypi.org/project/GenoKit/</a></p></li>
+<li><p>Web interface: <a class="reference external" href="http://www.genokit.cn/">http://www.genokit.cn/</a></p></li>
+<li><p>Contact: <a class="reference external" href="mailto:zhusitao1990&#37;&#52;&#48;163&#46;com">zhusitao1990<span>&#64;</span>163<span>&#46;</span>com</a></p></li>
+</ul>
+<p>When citing an analysis, record the actual version/source revision, input data
+releases and analysis parameters. Use the project’s released citation metadata
+when available; these documentation pages do not assign a publication DOI to
+an unpublished manuscript.</p>
+<p>Contributions and bug reports are welcome. Provide a small reproducible input,
+the exact CLI command and the complete error output. For workflow limitations
+and input checks, see <a class="reference internal" href="faq.html"><span class="doc">Troubleshooting and frequently asked questions</span></a>.</p>
 </section>
 
 
@@ -48,26 +63,49 @@
 
 
 
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
 
 
 
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="command_reference.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">About GenoKit</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="example.html" title="previous chapter">Example</a></li>
+      <li>Previous: <a href="documentation.html" title="previous chapter">Build and maintain the documentation</a></li>
   </ul></li>
 </ul>
 </div>

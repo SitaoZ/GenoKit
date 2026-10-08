@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Command reference &#8212; GenoKit 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reproducible workflows and performance" href="reproducibility.html" />
+    <link rel="prev" title="HGVS variant-context visualization" href="hgvs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="command-reference">
+<h1>Command reference<a class="headerlink" href="#command-reference" title="Link to this heading">¶</a></h1>
+<p>This snapshot is generated from the current CLI parser. It includes all
+26 public subcommands, their flags, choices and parser defaults. It does
+not import command implementations or execute an analysis. Defaults of
+<code class="docutils literal notranslate"><span class="pre">None</span></code> mean unspecified; some commands require an explicit output at
+runtime. See the user-guide pages for biological semantics and known
+implementation limits; parser acceptance is not a guarantee of behavior.</p>
+<p>Regenerate after changing the CLI using <a class="reference internal" href="documentation.html"><span class="doc">Build and maintain the documentation</span></a>.</p>
+<section id="genokit-create">
+<span id="cli-create"></span><h2>GenoKit create<a class="headerlink" href="#genokit-create" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit create [-h] -a ANNOTATION -g GENOME -o OUTPUT_DIR -p PREFIX
+                      -s {gff,gtf} [--database-format {sqlite,pickle}]
+                      [--skip-fasta-index]
+
+options:
+  -h, --help            show this help message and exit
+  -a, --annotation ANNOTATION
+                        genome annotation path (gff or gtf), uncompressed or gzip (.gz)
+  -g, --genome GENOME   genome fasta path, uncompressed or bgzip (.gz) ONLY (for efficient indexing)
+  -o, --output_dir OUTPUT_DIR
+                        database output directory path
+  -p, --prefix PREFIX   database prefix
+  -s, --style {gff,gtf}
+                        annotation syntax; use gff for GFF3 and gtf for GTF
+  --database-format {sqlite,pickle}
+                        database backend (default: sqlite; pickle writes a .pkl file)
+  --skip-fasta-index    do not create a missing FASTA .fai index
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-a,</span> <span class="pre">--annotation</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output_dir</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--prefix</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: required; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--database-format</span></code>: default: ‘sqlite’; choices: sqlite, pickle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--skip-fasta-index</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-fasta">
+<span id="cli-fasta"></span><h2>GenoKit fasta<a class="headerlink" href="#genokit-fasta" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit fasta [-h] -f FASTA -i INPUT -o OUTPUT
+
+options:
+  -h, --help           show this help message and exit
+  -f, --fasta FASTA    fasta file path
+  -i, --input INPUT    input file containing fasta id, one per line
+  -o, --output OUTPUT  output file path
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--fasta</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--input</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: required.</p></li>
+</ul>
+</section>
+<section id="genokit-stat">
+<span id="cli-stat"></span><h2>GenoKit stat<a class="headerlink" href="#genokit-stat" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit stat [-h] -d DATABASE -g GENOME [-o OUTPUT] [-s {gff,gtf}]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -g, --genome GENOME   genome fasta path
+  -o, --output OUTPUT   output path, if not stdout
+  -s, --style {gff,gtf}
+                        genome annotation file format
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+</ul>
+</section>
+<section id="genokit-kmer">
+<span id="cli-kmer"></span><h2>GenoKit kmer<a class="headerlink" href="#genokit-kmer" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit kmer [-h] [-f FASTA] [-d DATABASE] [-g GENOME]
+                    [--source-type {genome,transcriptome}] [-j JELLYFISH]
+                    [--engine {auto,jellyfish,python}] [-t THREADS]
+                    [--hash-size HASH_SIZE] [-l LENGTH] [--lengths LENGTHS]
+                    -o OUTPUT_DIR [--sqlite-db SQLITE_DB]
+                    [--register-jf REGISTER_JF] [-r]
+
+Build a source-aware k-mer catalogue for GenoKit design commands.
+
+Important k values:
+  k=18-25    Complete primer sequences; exact primer lengths are queried.
+  k=19-21    Complete sgRNA, siRNA and shRNA target sequences.
+
+Recommended: build k=18-25 for both biological sources. The genome
+dataset supports genomic primers and sgRNA; the mature-transcriptome dataset
+supports RT-PCR/qPCR primers, siRNA and shRNA. Both sources can coexist in
+the same genokit.kmer.sqlite catalogue and are selected independently.
+
+options:
+  -h, --help            show this help message and exit
+  -f, --fasta FASTA     genome FASTA, or a pre-built mature-transcript FASTA
+  -d, --database DATABASE
+                        annotation database used to build a mature transcriptome
+  -g, --genome GENOME   genome FASTA used with --database for transcriptome counting
+  --source-type {genome,transcriptome}
+                        biological source recorded in the k-mer catalogue (default: genome)
+  -j, --jellyfish JELLYFISH
+                        path to the jellyfish executable
+  --engine {auto,jellyfish,python}
+                        counting engine (default: auto)
+  -t, --threads THREADS
+                        worker threads for Jellyfish (default: all available CPUs)
+  --hash-size HASH_SIZE
+                        Jellyfish hash size (default: 3G)
+  -l, --length LENGTH   single k-mer length (default: 18); use --lengths for a design catalogue
+  --lengths LENGTHS     multiple k values (recommended: 18-25 for complete primers and RNA targets)
+  -o, --output_dir OUTPUT_DIR
+                        kmer output directory (auto-created)
+  --sqlite-db SQLITE_DB
+                        SQLite k-mer catalogue (default: OUTPUT_DIR/genokit.kmer.sqlite)
+  --register-jf REGISTER_JF
+                        register an existing Jellyfish database; may be repeated
+  -r, --reverse_complement
+                        include reverse-complement k-mers (canonical mode with Jellyfish)
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--fasta</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--source-type</span></code>: default: ‘genome’; choices: genome, transcriptome.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-j,</span> <span class="pre">--jellyfish</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--engine</span></code>: default: ‘auto’; choices: auto, jellyfish, python.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--threads</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--hash-size</span></code>: default: ‘3G’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 18.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lengths</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output_dir</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sqlite-db</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--register-jf</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--reverse_complement</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-iupac">
+<span id="cli-iupac"></span><h2>GenoKit iupac<a class="headerlink" href="#genokit-iupac" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit iupac [-h] [-a | -c | -n]
+
+options:
+  -h, --help        show this help message and exit
+  -a, --amino       amino acid code
+  -c, --codon       codon table
+  -n, --nucleotide  nucleotide code
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-a,</span> <span class="pre">--amino</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--codon</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n,</span> <span class="pre">--nucleotide</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-gene">
+<span id="cli-gene"></span><h2>GenoKit gene<a class="headerlink" href="#genokit-gene" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit gene [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                    [-i GENE] [-o OUTPUT] [-p] [-s {gff,gtf}]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -i, --gene GENE       specific gene id (extract all if omitted)
+  -o, --output OUTPUT   output file path
+  -p, --print           output to stdout
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: unspecified; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+</ul>
+</section>
+<section id="genokit-transcript">
+<span id="cli-transcript"></span><h2>GenoKit transcript<a class="headerlink" href="#genokit-transcript" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit transcript [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                          [-i TRANSCRIPT] [-o OUTPUT] [-s {gff,gtf}] [-u] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -u, --upper           upper cds and lower utr
+  -v, --print           output to stdout
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u,</span> <span class="pre">--upper</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-igr">
+<span id="cli-igr"></span><h2>GenoKit igr<a class="headerlink" href="#genokit-igr" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit igr [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                   [-l IGR_LENGTH] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -l, --igr_length IGR_LENGTH
+                        igr length threshold
+  -o, --output OUTPUT   output fasta file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--igr_length</span></code>: default: 100.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-promoter">
+<span id="cli-promoter"></span><h2>GenoKit promoter<a class="headerlink" href="#genokit-promoter" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit promoter [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                        [-i GENE] [-l PROMOTER_LENGTH] [-o OUTPUT]
+                        [-s {gff,gtf}] [-u UTR5_UPPER_LENGTH] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta path
+  -i, --gene GENE       specific gene id (extract all if omitted)
+  -l, --promoter_length PROMOTER_LENGTH
+                        promoter length before TSS (default: 100)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        genome annotation file format
+  -u, --utr5_upper_length UTR5_UPPER_LENGTH
+                        5&#39; utr length after TSS (default: 10)
+  -v, --print           output to stdout
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--promoter_length</span></code>: default: 100.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u,</span> <span class="pre">--utr5_upper_length</span></code>: default: 10.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-sirna">
+<span id="cli-sirna"></span><h2>GenoKit sirna<a class="headerlink" href="#genokit-sirna" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit sirna [-h] -d DATABASE [-f {csv,fasta}] -g GENOME [-i GENE]
+                     [-k KMER_BIN] [--jellyfish JELLYFISH] [-l {19,20,21}]
+                     [--region {cds,transcript}] [--target-mode {all,any}]
+                     [--top TOP] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta}
+                        output format (default: csv)
+  -g, --genome GENOME   genome fasta file
+  -i, --gene GENE       specific gene id (extract all if omitted)
+  -k, --kmer_bin KMER_BIN
+                        source-aware GenoKit k-mer SQLite database
+  --jellyfish JELLYFISH
+                        optional Jellyfish executable for .jf queries; specify if the saved path is invalid or Jellyfish is not on PATH
+  -l, --length {19,20,21}
+                        siRNA length (default: 21)
+  --region {cds,transcript}
+                        target region: CDS (default, compatible) or mature transcript
+  --target-mode {all,any}
+                        target all input transcripts of each gene (default) or at least one transcript
+  --top TOP             maximum number of ranked siRNAs to keep per gene
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k,</span> <span class="pre">--kmer_bin</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jellyfish</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 21; choices: 19, 20, 21.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--region</span></code>: default: ‘cds’; choices: cds, transcript.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--target-mode</span></code>: default: ‘all’; choices: all, any.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-sgrna">
+<span id="cli-sgrna"></span><h2>GenoKit sgrna<a class="headerlink" href="#genokit-sgrna" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit sgrna [-h] [-d DATABASE] [-f {csv,fasta}] [-g GENOME] [-i GENE]
+                     [-k KMER_BIN] [--jellyfish JELLYFISH] [-l LENGTH]
+                     [-o OUTPUT] [-p PAM_PATTERN] [-s {gff,gtf}] [-v] [--pam]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta}
+                        output format (default: csv)
+  -g, --genome GENOME   genome fasta file
+  -i, --gene GENE       specific gene id (extract all if omitted)
+  -k, --kmer_bin KMER_BIN
+                        genome-source GenoKit k-mer SQLite database
+  --jellyfish JELLYFISH
+                        optional Jellyfish executable for .jf queries; specify if the saved path is invalid or Jellyfish is not on PATH
+  -l, --length LENGTH   sgRNA length (default: 20)
+  -o, --output OUTPUT   output file path
+  -p, --pam_pattern PAM_PATTERN
+                        PAM pattern, default: NGG (S.pyogenes Cas9)
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+  --pam                 PAM (protospacer adjacent motif) table
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k,</span> <span class="pre">--kmer_bin</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jellyfish</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 20.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--pam_pattern</span></code>: default: ‘NGG’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pam</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-primer">
+<span id="cli-primer"></span><h2>GenoKit primer<a class="headerlink" href="#genokit-primer" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit primer [-h] [-a MIN_GC] [-b MAX_GC] [-c MIN_TM] [-e MAX_TM]
+                      -d DATABASE [-f {fasta,csv}] -g GENOME [-i GENE]
+                      [-k KMER_BIN] [-l KMER_SIZE]
+                      [--kmer-source {genome,transcriptome}] [-m MAX_LENGTH]
+                      [-n MIN_LENGTH] [-o OUTPUT] [-s {gff,gtf}] [-x MIN_SIZE]
+                      [-y MAX_SIZE] [-v] [--template-type {genomic,cdna}]
+                      [--jellyfish JELLYFISH]
+
+options:
+  -h, --help            show this help message and exit
+  -a, --min_gc MIN_GC   min GC content, (default: 0.4)
+  -b, --max_gc MAX_GC   max GC content, (default: 0.6)
+  -c, --min_tm MIN_TM   min tm value, (default: 50)
+  -e, --max_tm MAX_TM   max tm value, (default: 70)
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {fasta,csv}
+                        output format (default: csv)
+  -g, --genome GENOME   genome fasta file
+  -i, --gene GENE       specific gene (optional); if not given,
+                        return all genes in database
+  -k, --kmer_bin KMER_BIN
+                        GenoKit k-mer SQLite database used to calculate Kmer_freq
+  -l, --kmer_size KMER_SIZE
+                        the kmer length of kmer binary database
+  --kmer-source {genome,transcriptome}
+                        k-mer source; defaults to genome for genomic templates or transcriptome for cdna; must match --template-type
+  -m, --max_length MAX_LENGTH
+                        primer length (bp), (default: 25)
+  -n, --min_length MIN_LENGTH
+                        primer length (bp), (default: 18)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -x, --min_size MIN_SIZE
+                        min target region length (bp), (default: 100)
+  -y, --max_size MAX_SIZE
+                        max target region length (bp), (default: 1000)
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+  --template-type {genomic,cdna}
+                        primer template: genomic gene DNA including introns, or mature spliced cdna (default: cdna)
+  --jellyfish JELLYFISH
+                        optional Jellyfish executable for .jf queries; specify if the saved path is invalid or Jellyfish is not on PATH
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-a,</span> <span class="pre">--min_gc</span></code>: default: 0.4.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-b,</span> <span class="pre">--max_gc</span></code>: default: 0.6.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--min_tm</span></code>: default: 50.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e,</span> <span class="pre">--max_tm</span></code>: default: 70.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: fasta, csv.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k,</span> <span class="pre">--kmer_bin</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--kmer_size</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--kmer-source</span></code>: default: unspecified; choices: genome, transcriptome.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m,</span> <span class="pre">--max_length</span></code>: default: 25.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n,</span> <span class="pre">--min_length</span></code>: default: 18.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x,</span> <span class="pre">--min_size</span></code>: default: 100.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-y,</span> <span class="pre">--max_size</span></code>: default: 1000.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--template-type</span></code>: default: ‘cdna’; choices: genomic, cdna.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jellyfish</span></code>: default: unspecified.</p></li>
+</ul>
+</section>
+<section id="genokit-motif">
+<span id="cli-motif"></span><h2>GenoKit motif<a class="headerlink" href="#genokit-motif" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit motif [-h] [-b] [-c] [-d] [-e] [-f FILE] -i INPUT [-m MOTIF]
+                     [-o OUTPUT] [-t {dna,rna}] [-x MISMATCHES]
+
+options:
+  -h, --help            show this help message and exit
+  -b, --both-strands    search on both chains
+  -c, --case-sensitive  case sensitive
+  -d, --degenerate      using IUPAC degenerate bases
+  -e, --regex           using regular expressions
+  -f, --file FILE       a file containing multiple motifs (one per line)
+  -i, --input INPUT     input fasta file
+  -m, --motif MOTIF     sequence pattern
+  -o, --output OUTPUT   output file path
+  -t, --type {dna,rna}  seq type: dna or rna
+  -x, --mismatches MISMATCHES
+                        Maximum number of mismatches allowed
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-b,</span> <span class="pre">--both-strands</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--case-sensitive</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--degenerate</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e,</span> <span class="pre">--regex</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--file</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--input</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m,</span> <span class="pre">--motif</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--type</span></code>: default: ‘dna’; choices: dna, rna.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x,</span> <span class="pre">--mismatches</span></code>: default: 0.</p></li>
+</ul>
+</section>
+<section id="genokit-ppi">
+<span id="cli-ppi"></span><h2>GenoKit ppi<a class="headerlink" href="#genokit-ppi" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit ppi [-h] -i INPUT [-s {tab,comma}] [-o OUTPUT_DIR]
+                   [-l {auto,fr,kk,forceatlas2,circle,star,tree,grid,shell,spectral,spiral,random}]
+
+options:
+  -h, --help            show this help message and exit
+  -i, --input INPUT     PPI input file (proteinA,proteinB)
+  -s, --separator {tab,comma}
+                        separator between proteinA and proteinB
+  -o, --output_dir OUTPUT_DIR
+                        output directory path
+  -l, --layout {auto,fr,kk,forceatlas2,circle,star,tree,grid,shell,spectral,spiral,random}
+                        network layout inspired by igraph; auto chooses a layout from network topology and size (default: auto)
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--input</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--separator</span></code>: default: unspecified; choices: tab, comma.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output_dir</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--layout</span></code>: default: ‘auto’; choices: auto, fr, kk, forceatlas2, circle, star, tree, grid, shell, spectral, spiral, random.</p></li>
+</ul>
+</section>
+<section id="genokit-view">
+<span id="cli-view"></span><h2>GenoKit view<a class="headerlink" href="#genokit-view" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit view [-h] -d DATABASE [-f {pdf,png,tiff}] -g GENOME [-i GENE]
+                    [-l LENGTH] [--orf-label-limit ORF_LABEL_LIMIT]
+                    [-o OUTPUT_DIR] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {pdf,png,tiff}
+                        output format (default: pdf)
+  -g, --genome GENOME   genome fasta file
+  -i, --gene GENE       specific gene (optional); if not given, return all genes in database
+  -l, --length LENGTH   minimum uORF/dORF length in nt; shorter ORFs are hidden (default: 6)
+  --orf-label-limit ORF_LABEL_LIMIT
+                        show individual ORF numbers only when a transcript has no more than this many ORFs; use 0 to hide all numbers (default: 20)
+  -o, --output_dir OUTPUT_DIR
+                        output directory path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘pdf’; choices: pdf, png, tiff.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 6.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--orf-label-limit</span></code>: default: 20.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output_dir</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-circos">
+<span id="cli-circos"></span><h2>GenoKit circos<a class="headerlink" href="#genokit-circos" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit circos [-h] [-a CHROM] [-b BAR] [-c CYTOBAND]
+                      [-f {pdf,png,tiff}] [-k LINK] [-l LINE] [-t TRACK]
+                      [-m HEATMAP] [-w WINDOW] [-o OUTPUT_FILE] [-p POINT]
+                      [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -a, --chrom CHROM     chromosome length file (chr,start,end)
+  -b, --bar BAR         barplot track file (chr,start,end,value)
+  -c, --cytoband CYTOBAND
+                        cytoBand track file (chr1,1,2300000,p36.33,gneg)
+  -f, --output_format {pdf,png,tiff}
+                        output format (default: pdf)
+  -k, --link LINK       link track file (chr1,start1,end1,chr2,start2,end2)
+  -l, --line LINE       line track file (chr,start,end,value)
+  -t, --track TRACK     line or link track file (automatically detected from its header)
+  -m, --heatmap HEATMAP
+                        heatmap track file (chr,start,end,value)
+  -w, --window WINDOW   window size, (default: 1000000)
+  -o, --output_file OUTPUT_FILE
+                        output file path
+  -p, --point POINT     Point track file (chr,start,end,value)
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-a,</span> <span class="pre">--chrom</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-b,</span> <span class="pre">--bar</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--cytoband</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘pdf’; choices: pdf, png, tiff.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k,</span> <span class="pre">--link</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--line</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--track</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m,</span> <span class="pre">--heatmap</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-w,</span> <span class="pre">--window</span></code>: default: 1000000.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output_file</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--point</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-terminator">
+<span id="cli-terminator"></span><h2>GenoKit terminator<a class="headerlink" href="#genokit-terminator" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit terminator [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                          [-i GENE] [-l TERMINATOR_LENGTH] [-o OUTPUT]
+                          [-s {gff,gtf}] [-u UTR3_LOWER_LENGTH] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta path
+  -i, --gene GENE       specific gene (optional); if not given, return whole genes
+  -l, --terminator_length TERMINATOR_LENGTH
+                        terminator length (default: 100)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        genome annotation file format
+  -u, --utr3_lower_length UTR3_LOWER_LENGTH
+                        3&#39; length (default: 10)
+  -v, --print           output to stdout
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: unspecified; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--terminator_length</span></code>: default: 100.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u,</span> <span class="pre">--utr3_lower_length</span></code>: default: 10.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-utr">
+<span id="cli-utr"></span><h2>GenoKit utr<a class="headerlink" href="#genokit-utr" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit utr [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                   [-i TRANSCRIPT] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format (default: csv)
+  -g, --genome GENOME   genome fasta file
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-uorf">
+<span id="cli-uorf"></span><h2>GenoKit uorf<a class="headerlink" href="#genokit-uorf" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit uorf [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                    [-i TRANSCRIPT] [-l LENGTH] [-m SCHEMATIC_WITHOUT_INTRON]
+                    [-n SCHEMATIC_WITH_INTRON] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format (default: csv)
+  -g, --genome GENOME   genome fasta
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -l, --length LENGTH   uorf length threshold, (default: 6)
+  -m, --schematic_without_intron SCHEMATIC_WITHOUT_INTRON
+                        schematic figure file for uorf, cds
+                        and transcript without intron
+  -n, --schematic_with_intron SCHEMATIC_WITH_INTRON
+                        schematic figure file for uorf, cds
+                        and transcript with intron
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 6.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m,</span> <span class="pre">--schematic_without_intron</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n,</span> <span class="pre">--schematic_with_intron</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-cds">
+<span id="cli-cds"></span><h2>GenoKit cds<a class="headerlink" href="#genokit-cds" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit cds [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                   [-i TRANSCRIPT] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-dorf">
+<span id="cli-dorf"></span><h2>GenoKit dorf<a class="headerlink" href="#genokit-dorf" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit dorf [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                    [-i TRANSCRIPT] [-l LENGTH] [-m SCHEMATIC_WITHOUT_INTRON]
+                    [-n SCHEMATIC_WITH_INTRON] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -l, --length LENGTH   dorf length, (default: 6)
+  -m, --schematic_without_intron SCHEMATIC_WITHOUT_INTRON
+                        schematic figure file for dorf, cds
+                        and transcript without intron
+  -n, --schematic_with_intron SCHEMATIC_WITH_INTRON
+                        schematic figure file for dorf, cds
+                        and transcript with intron
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 6.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m,</span> <span class="pre">--schematic_without_intron</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n,</span> <span class="pre">--schematic_with_intron</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-exon">
+<span id="cli-exon"></span><h2>GenoKit exon<a class="headerlink" href="#genokit-exon" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit exon [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                    [-i TRANSCRIPT] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-intron">
+<span id="cli-intron"></span><h2>GenoKit intron<a class="headerlink" href="#genokit-intron" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit intron [-h] -d DATABASE [-f {csv,fasta,gff,gtf}] -g GENOME
+                      [-i TRANSCRIPT] [-o OUTPUT] [-s {gff,gtf}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta,gff,gtf}
+                        output format
+  -g, --genome GENOME   genome fasta
+  -i, --transcript TRANSCRIPT
+                        specific transcript id (extract all if omitted)
+  -o, --output OUTPUT   output file path
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  -v, --print           output to stdout
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta, gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--transcript</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-barcode">
+<span id="cli-barcode"></span><h2>GenoKit barcode<a class="headerlink" href="#genokit-barcode" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit barcode [-h] [-f {csv,fasta}] -l LENGTH [-n COUNT] [-o OUTPUT]
+                       [-s {dna,rna}] [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -f, --output_format {csv,fasta}
+                        output format (default: csv)
+  -l, --length LENGTH   barcode length (default: 8)
+  -n, --count COUNT     the number of barcode (default: 20)
+  -o, --output OUTPUT   output file path
+  -s, --style {dna,rna}
+                        style of nucleotide (dna, rna)
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-n,</span> <span class="pre">--count</span></code>: default: 20.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: dna, rna.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-shrna">
+<span id="cli-shrna"></span><h2>GenoKit shrna<a class="headerlink" href="#genokit-shrna" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit shrna [-h] -d DATABASE [-f {csv,fasta}] -g GENOME [-i GENE]
+                     [-k KMER_BIN] [--jellyfish JELLYFISH] [-l {19,20,21}]
+                     [-o OUTPUT] [-p LOOP] [-s {gff,gtf}]
+                     [--region {cds,transcript}] [--target-mode {all,any}]
+                     [-v]
+
+options:
+  -h, --help            show this help message and exit
+  -d, --database DATABASE
+                        SQLite (.sqlite) or pickle (.pkl) database generated by create
+  -f, --output_format {csv,fasta}
+                        output format (default: csv)
+  -g, --genome GENOME   genome fasta file
+  -i, --gene GENE       specific gene id (extract all if omitted)
+  -k, --kmer_bin KMER_BIN
+                        transcriptome-source GenoKit k-mer SQLite database
+  --jellyfish JELLYFISH
+                        optional Jellyfish executable for .jf queries; specify if the saved path is invalid or Jellyfish is not on PATH
+  -l, --length {19,20,21}
+                        shRNA target length: 19, 20, or 21 nt (default: 21)
+  -o, --output OUTPUT   output file path
+  -p, --loop LOOP       loop: an ATCG sequence, or standard/miR30/simple (default: CTCGAG)
+  -s, --style {gff,gtf}
+                        gtf database or gff database
+  --region {cds,transcript}
+                        target region: CDS (default; exons if no CDS) or mature transcript
+  --target-mode {all,any}
+                        target all input transcripts of each gene (default) or at least one transcript
+  -v, --print           output to stdout. -v and -o option are mutually exclusive
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d,</span> <span class="pre">--database</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--output_format</span></code>: default: ‘csv’; choices: csv, fasta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g,</span> <span class="pre">--genome</span></code>: required.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--gene</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k,</span> <span class="pre">--kmer_bin</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jellyfish</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--length</span></code>: default: 21; choices: 19, 20, 21.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--loop</span></code>: default: ‘CTCGAG’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--style</span></code>: default: unspecified; choices: gff, gtf.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--region</span></code>: default: ‘cds’; choices: cds, transcript.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--target-mode</span></code>: default: ‘all’; choices: all, any.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--print</span></code>: default: False.</p></li>
+</ul>
+</section>
+<section id="genokit-hgvs">
+<span id="cli-hgvs"></span><h2>GenoKit hgvs<a class="headerlink" href="#genokit-hgvs" title="Link to this heading">¶</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: GenoKit hgvs [-h] [-i INPUT] [-s STRING]
+                    [--variation {sub,del,ins,delins,dup,inv,rpt,alleles,ext,fs}]
+                    [-o OUTPUT] [--genbank GENBANK] [--cache-dir CACHE_DIR]
+                    [--context CONTEXT] [--dpi DPI] [--email EMAIL]
+                    [--api-key API_KEY] [--allow-reference-mismatch]
+                    [--skip-three-prime-check]
+
+Build a tool for visualizing HGVS nomenclature.
+A letter prefix indicates the type of reference sequence used.
+Accepted prefixes are;
+    • c for a coding DNA reference sequence,
+    • g for a linear genomic reference sequence,
+    • m for a mitochondrial DNA reference sequence,
+    • n for a non-coding DNA reference sequence,
+    • o for a circular genomic reference sequence,
+    • p for a protein reference sequence,
+    • r for an RNA reference sequence (transcript).
+
+options:
+  -h, --help            show this help message and exit
+  -i, --input INPUT     text/CSV file containing one HGVS expression per line
+  -s, --string STRING   DNA, RNA or protein HGVS expression (g./c./n./m./o., r. or p.)
+  --variation {sub,del,ins,delins,dup,inv,rpt,alleles,ext,fs}
+                        optional expected variation type used for validation
+  -o, --output OUTPUT   output PNG/PDF/SVG path; for multiple inputs, output directory or prefix
+  --genbank GENBANK     local GenBank/GenPept file instead of downloading from NCBI
+  --cache-dir CACHE_DIR
+                        NCBI GenBank cache directory (default: .genokit_cache/hgvs)
+  --context CONTEXT     flanking bases/residues displayed in the detailed panel (default: 20)
+  --dpi DPI             raster output resolution (default: 200)
+  --email EMAIL         email sent to NCBI E-utilities (or set NCBI_EMAIL)
+  --api-key API_KEY     NCBI API key (or set NCBI_API_KEY)
+  --allow-reference-mismatch
+                        draw an invalid reference allele as a warning instead of stopping
+  --skip-three-prime-check
+                        skip the local 3&#39; check for simple del/dup/ins diagnostic input
+</pre></div>
+</div>
+<p><strong>Parser defaults and requirements</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-i,</span> <span class="pre">--input</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--string</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--variation</span></code>: default: unspecified; choices: sub, del, ins, delins, dup, inv, rpt, alleles, ext, fs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--genbank</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cache-dir</span></code>: default: ‘.genokit_cache/hgvs’.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--context</span></code>: default: 20.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dpi</span></code>: default: 200.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--email</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--api-key</span></code>: default: unspecified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--allow-reference-mismatch</span></code>: default: False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--skip-three-prime-check</span></code>: default: False.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">GenoKit</a></h1>
+
+
+
+<p class="blurb">Annotation, sequence extraction, design and visualization</p>
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: annotation to sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Worked example with a small genome</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inputs_outputs.html">Inputs, outputs and coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">Annotation databases and utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraction.html">Genomic feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regulatory_orfs.html">Upstream and downstream ORFs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kmer.html">K-mer catalogues and portability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer.html">Primer design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rna_design.html">sgRNA, siRNA and shRNA design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motif_barcode.html">Motif searches and barcodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Gene, genome and network visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hgvs.html">HGVS variant-context visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference and support</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-create">GenoKit create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-fasta">GenoKit fasta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-stat">GenoKit stat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-kmer">GenoKit kmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-iupac">GenoKit iupac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-gene">GenoKit gene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-transcript">GenoKit transcript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-igr">GenoKit igr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-promoter">GenoKit promoter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-sirna">GenoKit sirna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-sgrna">GenoKit sgrna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-primer">GenoKit primer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-motif">GenoKit motif</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-ppi">GenoKit ppi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-view">GenoKit view</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-circos">GenoKit circos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-terminator">GenoKit terminator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-utr">GenoKit utr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-uorf">GenoKit uorf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-cds">GenoKit cds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-dorf">GenoKit dorf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-exon">GenoKit exon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-intron">GenoKit intron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-barcode">GenoKit barcode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-shrna">GenoKit shrna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#genokit-hgvs">GenoKit hgvs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Reproducible workflows and performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Troubleshooting and frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migration.html">Migration from older examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Build and maintain the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About GenoKit</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="hgvs.html" title="previous chapter">HGVS variant-context visualization</a></li>
+      <li>Next: <a href="reproducibility.html" title="next chapter">Reproducible workflows and performance</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Sitao Zhu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/command_reference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
