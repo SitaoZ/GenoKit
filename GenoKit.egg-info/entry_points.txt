@@ -1,4 +1,3 @@
 [console_scripts]
 GenoKit = GenoKit.command_genokit:main
 GenoKitGB = GenoKit.command_genokitgb:main
-

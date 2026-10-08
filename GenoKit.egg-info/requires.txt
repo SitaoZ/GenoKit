@@ -1,5 +1,12 @@
-argparse>=1.1
-pandas>=1.2.4
-gffutils>=0.10.1
-setuptools>=49.2.0
-biopython>=1.78
+pandas>=2.2.3
+setuptools>=72.1.0
+biopython>=1.86
+python-louvain>=0.16
+python-circos>=0.3.0
+tabulate>=0.9.0
+tqdm>=4.0
+Django>=5.2.8
+pyfaidx>=0.9
+matplotlib>=3.10.0
+requests>=2.32.3
+networkx>=3.6.1
