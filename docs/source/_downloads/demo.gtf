@@ -1,0 +1,18 @@
+demo_chr	GenoKitDemo	gene	101	340	.	+	.	gene_id "DEMO1"; gene_name "DEMO1";
+demo_chr	GenoKitDemo	transcript	101	340	.	+	.	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	exon	101	190	.	+	.	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	exon	251	340	.	+	.	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	CDS	121	190	.	+	0	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	CDS	251	300	.	+	2	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	stop_codon	301	303	.	+	0	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	five_prime_utr	101	120	.	+	.	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	three_prime_utr	304	340	.	+	.	gene_id "DEMO1"; gene_name "DEMO1"; transcript_id "DEMO1.t1";
+demo_chr	GenoKitDemo	gene	501	740	.	-	.	gene_id "DEMO2"; gene_name "DEMO2";
+demo_chr	GenoKitDemo	transcript	501	740	.	-	.	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	exon	501	590	.	-	.	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	exon	651	740	.	-	.	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	CDS	541	590	.	-	2	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	CDS	651	720	.	-	0	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	stop_codon	538	540	.	-	0	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	five_prime_utr	721	740	.	-	.	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";
+demo_chr	GenoKitDemo	three_prime_utr	501	537	.	-	.	gene_id "DEMO2"; gene_name "DEMO2"; transcript_id "DEMO2.t1";

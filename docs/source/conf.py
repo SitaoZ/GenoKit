@@ -1,29 +1,18 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
+"""Sphinx configuration: build the user guide without importing GenoKit."""
+from pathlib import Path
+import runpy
 project = 'GenoKit'
-copyright = '2026, Sitao Zhu'
 author = 'Sitao Zhu'
-release = 'v1.0.0'
-
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
-extensions = []
-
+copyright = '2026, Sitao Zhu'
+version_file = Path(__file__).resolve().parents[2] / 'GenoKit/version.py'
+release = runpy.run_path(str(version_file))['__version__'] if version_file.is_file() else '1.0.0'
+version = release
+language = 'en'
+extensions = ['sphinx.ext.mathjax']
 templates_path = ['_templates']
-exclude_patterns = []
-
-
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
+# Retain pre-existing apidoc stubs on disk but do not publish stale import-based API pages.
+exclude_patterns = ['GenoKit/**', '_tools/**', '_downloads/**', '**/.DS_Store']
 html_theme = 'alabaster'
-# html_theme = 'classic'
 html_static_path = ['_static']
+html_title = f'GenoKit {release} documentation'
+html_theme_options = {'description': 'Annotation, sequence extraction, design and visualization'}
