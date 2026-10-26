@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-import argparse
+
+import os
 import sys
+from GenoKit.version import __version__, __date__
 
 class Colors:
     """ANSI颜色代码"""
@@ -40,6 +42,8 @@ class Colors:
 
 def colorize(text, color=None, bg_color=None, style=None):
     """应用颜色和样式"""
+    if not sys.stdout.isatty() or os.environ.get('NO_COLOR') is not None:
+        return text
     color_code = getattr(Colors, color.upper(), '') if color else ''
     bg_code = getattr(Colors, bg_color.upper(), '') if bg_color else ''
     style_code = getattr(Colors, style.upper(), '') if style else ''
@@ -143,44 +147,53 @@ def main_usage():
 
     # 版本和联系信息
     print(colorize("  GenoKit - Genome and Gene ToolKit", "LIGHT_CYAN", style="BOLD") +
-          colorize(" v0.2.6", "LIGHT_YELLOW"))
+          colorize(f"  v{__version__}", "LIGHT_YELLOW"))
     print(colorize("  Contact: Sitao Zhu <zhusitao1990@163.com>", "LIGHT_CYAN"))
     print()
 
     # 使用说明
     print(colorize("  Usage:", "LIGHT_MAGENTA", style="BOLD"))
-    print("    " + colorize("GenoKit <command> [parameters]", "LIGHT_WHITE"))
+    print("    " + colorize("GenoKit [--help | --version]", "LIGHT_WHITE"))
+    print("    " + colorize("GenoKit <command>  [options]", "LIGHT_WHITE"))
     print()
 
     # 命令分类
     sections = [
         ("Database", [
-            ("create", "Create GFF/GTF database"),
-            ("stat", "Database statistics")
+            ("create", "Build a genome annotation database"),
+            ("fasta", "Extract selected FASTA records"),
+            ("iupac", "Display standard IUPAC codes"),
+            ("kmer", "Build genome/transcriptome k-mer catalogues"),
+            ("stat", "Summarize annotation statistics")
         ]),
         ("Extract", [
-            ("gene", "Extract gene sequence"),
-            ("mrna", "Extract mRNA sequence"),
-            ("transcript", "Extract transcript sequence"),
-            ("exon", "Extract exon sequence"),
-            ("intron", "Extract intron sequence"),
-            ("cds", "Extract CDS sequence"),
-            ("utr", "Extract 5'/3'UTR sequence"),
-            ("uorf", "Extract uORF sequence"),
-            ("dorf", "Extract dORF sequence"),
-            ("promoter", "Extract promoter sequence"),
-            ("terminator", "Extract terminator sequence"),
-            ("igr", "Extract intergenic region")
+            ("gene", "Extract genomic gene sequences"),
+            # ("mrna", "Extract messenger RNA sequences"),
+            ("transcript", "Extract spliced transcript sequences"),
+            ("exon", "Extract transcript exon sequences"),
+            ("intron", "Extract gene intron sequences"),
+            ("cds", "Extract coding sequence regions"),
+            ("utr", "Extract 5′ and 3′ UTR sequences"),
+            ("uorf", "Extract upstream open reading frames"),
+            ("dorf", "Extract downstream open reading frames"),
+            ("promoter", "Extract promoter sequence regions"),
+            ("terminator", "Extract terminator sequence regions"),
+            ("igr", "Extract intergenic region sequences")
         ]),
         ("Design", [
-            ("primer", "Primer design"),
-            ("sgrna", "Single guide RNA design"),
-            ("sirna", "Small interfering RNA design"),
-            ("motif", "Motif search")
+            ("barcode", "Design DNA and RNA barcode sets"),
+            ("motif", "Search and analyze sequence motifs"),
+            ("primer", "Design gene-specific primer pairs"),
+            ("sgrna", "Design CRISPR single-guide RNAs"),
+            ("shrna", "Design small hairpin RNA candidates"),
+            ("sirna", "Design small interfering RNAs")
         ]),
         ("Visualize", [
-            ("vision", "Snapshot gene structure"),
-            ("circos", "Circlize genome structure")
+            ("circos", "Visualize circular genome structure"),
+            ("hgvs", "Visualize DNA, RNA, and protein variants"),
+            ("ppi", "Visualize protein interaction networks"),
+            ("view", "Visualize annotated gene structure"),
+            # ("expression", "Gene expression pattern")
         ])
     ]
 
@@ -189,32 +202,53 @@ def main_usage():
         print(colorize(f"  {section}:", "LIGHT_GREEN", style="BOLD"))
         for cmd, desc in commands:
             print("    " +
-                  colorize(f"{cmd.ljust(12)}", "LIGHT_BLUE", style="BOLD") +
+                  colorize(f"{cmd.ljust(15)}", "LIGHT_BLUE", style="BOLD") +
                   colorize(desc, "WHITE"))
-        print()
+        # print()
 
     # 标志
+    print()
     print(colorize("  Flags:", "LIGHT_MAGENTA", style="BOLD"))
     print("    " +
-          colorize("-h, --help".ljust(12), "LIGHT_YELLOW", style="BOLD") +
-          colorize("Show this help message", "WHITE"))
+          colorize("-h, --help".ljust(15), "LIGHT_YELLOW", style="BOLD") +
+          colorize("Display command help information", "WHITE"))
+    print("    " +
+          colorize("-v, --version".ljust(15), "LIGHT_YELLOW", style="BOLD") +
+          colorize("Display GenoKit version information", "WHITE"))
     print()
+    print("  Run 'GenoKit <command> -h' for details on a command.")
+    # print(colorize("  Examples:", "LIGHT_MAGENTA", style="BOLD"))
+    # print("    GenoKit create -h")
+    # print("    GenoKit create -s gtf -a human.gtf -g human.fa -o ./ -p human")
+    # print()
+
 
 def main():
+
+    COMMANDS = ['create', 'fasta', 'iupac', 'kmer', 'stat',
+                'gene', 'transcript', 'igr', 'promoter', 'terminator',
+                'utr', 'uorf', 'cds', 'dorf', 'exon', 'intron',
+                'barcode', 'motif', 'primer', 'sgrna', 'shrna', 'sirna',
+                'circos', 'hgvs', 'ppi', 'view'
+                ]
     if len(sys.argv) == 1:
         main_usage()
-        sys.exit(0)
-    elif len(sys.argv) >= 2:
-        if sys.argv[1] in ['create','stat','gene','mrna','transcript','igr','promoter',
-                           'sirna', 'sgrna', 'primer', 'motif', 'vision', 'circos',
-                           'terminator','utr','uorf','cds','dorf','exon','intron']:
-            # import 就执行genokit()
-            # 安装后，系统存在GenoKit包
-            from GenoKit import genokit
-            #import genokit
-        else:
-            main_usage()
+        return
 
-    # 其他命令处理逻辑...
+    cmd = sys.argv[1]
+    if cmd in COMMANDS:
+        # Importing genokit parses and dispatches the selected subcommand.
+        from GenoKit import genokit
+        return
+    if cmd in ('-h', '--help'):
+        main_usage()
+        return
+    if cmd in ('-v', '--version'):
+        print("GenoKit v{} ({})".format(__version__, __date__))
+        return
+
+    print(f"error: unknown command '{cmd}'", file=sys.stderr)
+    print("Run 'GenoKit -h' to see available extract.", file=sys.stderr)
+    raise SystemExit(2)
 if __name__ == '__main__':
     main()
